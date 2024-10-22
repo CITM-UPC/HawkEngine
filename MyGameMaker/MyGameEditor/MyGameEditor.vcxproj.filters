@@ -62,5 +62,8 @@
     <ClInclude Include="App.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="Module.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -136,6 +136,24 @@ int main(int argc, char** argv) {
 
 	MainState state = CREATE;
 
+	Application = new App();
+	//initialize devil
+	ilInit();
+	iluInit();
+	ilutInit();
+	/*Window window("ImGUI with SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);*/
+	
+	init_openGL();
+	camera.transform().pos() = vec3(0, 1, 4);
+	camera.transform().rotate(glm::radians(180.0), vec3(0, 1, 0));
+
+	MyGUI* gui = nullptr;
+
+	mesh.LoadMesh("BakerHouse.fbx");
+	mesh.LoadTexture("Baker_house.png");
+	mesh.LoadCheckerTexture();
+
+
 	while (state != EXIT) 
 	{
 		switch (state)
@@ -163,11 +181,26 @@ int main(int argc, char** argv) {
 
 		case START:
 
-			if (Application->Start()) { state = LOOP; }
+			if (Application->Start()) { 
+				state = LOOP;
+				gui = new MyGUI(Application->window->windowPtr(), Application->window->contextPtr());
+			
+			}
 			else { state = FAIL; printf("Failed on START"); }
 			break;
 
 		case LOOP:
+
+			if (Application->window->ProcessEvents(gui) && Application->window->IsOpen()) {
+				const auto t0 = hrclock::now();
+				display_func();
+				gui->render();
+				move_camera();
+				Application->window->SwapBuffers();
+				const auto t1 = hrclock::now();
+				const auto dt = t1 - t0;
+				if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
+			}
 
 			if (!Application->Update()) {
 				state = FREE;
