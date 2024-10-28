@@ -6,7 +6,7 @@ class Material
 public:
 	Material() = default;
 
-	bool LoadTexture(const std::string& file_path, auto mesh);
+	bool LoadTexture(const std::string& file_path);
 	void Bind() const;
 
 	unsigned int GetTextureID() const { return textureID; }
