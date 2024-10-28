@@ -9,6 +9,9 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
+#include "MyGameEngine/GameObject.h"
+#include "MyGameEngine/MeshRendererComponent.h"
+#include "MyGameEngine/Material.h"
 
 
 #define MAX_KEYS 300
@@ -177,6 +180,8 @@ bool Input::processSDLEvents()
             else if (fileDir.ends_with(".png") || fileDir.ends_with(".dds"))
             {
                 std::filesystem::copy(fileDir, "Assets", std::filesystem::copy_options::overwrite_existing);
+                selectedGO.GetComponent<MeshRenderer>()->GetMaterial()->LoadTexture(fileDir);
+
             }
             SDL_free(event.drop.file);
             break;
