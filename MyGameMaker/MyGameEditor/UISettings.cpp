@@ -33,6 +33,9 @@ bool UISettings::Draw()
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse;
 
+	ImVec2 viewportPos = ImGui::GetMainViewport()->Pos;
+	ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
+
 	ImVec2 mainViewportPos = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(ImVec2(mainViewportPos.x, mainViewportPos.y), ImGuiCond_Appearing, ImVec2(0.5, 0.8));
 

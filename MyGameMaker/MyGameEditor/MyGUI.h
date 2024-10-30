@@ -8,6 +8,7 @@
 class UIElement;
 class UIConsole;
 class UISettings;
+class UIInspector;
 class UIMainMenuBar;
 // class PanelHierarchy;
 
@@ -39,6 +40,7 @@ public:
 	// UI Elements
 	UIConsole* UIconsolePanel = nullptr;
 	UISettings* UIsettingsPanel = nullptr;
+	UIInspector* UIinspectorPanel = nullptr;
 	UIMainMenuBar* UIMainMenuBarPanel = nullptr;
 
 private:

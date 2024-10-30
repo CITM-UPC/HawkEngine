@@ -9,6 +9,7 @@ enum class UIType
 	SETTINGS,
 	DEFAULT,
 	CONSOLE,
+	INSPECTOR,
 	UNKNOWN	
 };
 

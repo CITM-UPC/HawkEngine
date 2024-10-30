@@ -14,6 +14,7 @@
 #include "UIConsole.h"
 #include "UISettings.h"
 #include "UIMainMenuBar.h"
+#include "UIInspector.h"
 
 MyGUI::MyGUI(App* app) : Module(app) {
 	ImGui::CreateContext();
@@ -49,6 +50,10 @@ bool MyGUI::Awake() {
 	UIMainMenuBarPanel = new UIMainMenuBar(UIType::DEFAULT, "MainMenuBar");
 	elements.push_back(UIMainMenuBarPanel);
 	ret *= isInitialized(UIMainMenuBarPanel);
+
+	UIinspectorPanel = new UIInspector(UIType::INSPECTOR, "Inspector");
+	elements.push_back(UIinspectorPanel);
+	ret *= isInitialized(UIinspectorPanel);
 
 	// Other UI elements
 	
@@ -101,6 +106,7 @@ bool MyGUI::Start() {
 
 	Application->gui->UIconsolePanel->SetState(true);
 	Application->gui->UIsettingsPanel->SetState(true);
+	Application->gui->UIinspectorPanel->SetState(true);
 
 	return true;
 }
@@ -183,6 +189,10 @@ void MyGUI::Render() {
 
 	if (UIMainMenuBarPanel) {
 		UIMainMenuBarPanel->Draw();
+	}
+
+	if (UIinspectorPanel) {
+		UIinspectorPanel->Draw();
 	}
 
 	ImGui::Render();
