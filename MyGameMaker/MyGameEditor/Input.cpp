@@ -170,6 +170,7 @@ bool Input::processSDLEvents()
 
                 LOG(LogType::LOG_ASSIMP, "Importing %s from: %s", fileNameExt.data(), fileDir.data());
 
+                std::cout << "Importing " << fileNameExt << " from: " << fileDir << std::endl;
                 std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
                 mesh->LoadMesh(CopyFBXFileToProject(fileDir).c_str());
 

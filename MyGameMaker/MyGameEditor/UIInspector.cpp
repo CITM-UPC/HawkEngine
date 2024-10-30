@@ -105,7 +105,6 @@ bool UIInspector::Draw()
 			ImGui::Separator();
 
 			std::shared_ptr<Image> image = selectedGameObject->GetComponent<MeshRenderer>()->GetImage();
-		
 			if (image)
 			{
 				ImGui::Text("Image");

@@ -33,13 +33,13 @@ bool UIMainMenuBar::Draw()
 			//Aqui abajo mas botones para esconder las diferentes ventanas de Imgui
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("GameObjects"))
+		if (ImGui::BeginMenu("Create"))
 		{
 
-			if (ImGui::MenuItem("Create EmptyGameObject")) { Application->root->CreateEmptyObject("EmptyGameObject"); }
-			if (ImGui::MenuItem("Create Cube")) { Application->root->CreateCubeObject("Cube"); }
-			if (ImGui::MenuItem("Create Sphere")) { Application->root->CreateSphereObject("Sphere"); }
-			if (ImGui::MenuItem("Create Plane")) { Application->root->CreatePlaneObject("Plane"); }
+			if (ImGui::MenuItem("EmptyGameObject")) { Application->root->CreateEmptyObject("EmptyGameObject"); }
+			if (ImGui::MenuItem("Cube")) { Application->root->CreateCubeObject("Cube"); }
+			if (ImGui::MenuItem("Sphere")) { Application->root->CreateSphereObject("Sphere"); }
+			if (ImGui::MenuItem("Plane")) { Application->root->CreatePlaneObject("Plane"); }
 			if (ImGui::MenuItem("SetCheckerTexture")) { Application->input->GetSelectedGameObject()->GetComponent<MeshRenderer>()->GetImage()->LoadCheckerTexture(); }
 			ImGui::EndMenu();
 		}

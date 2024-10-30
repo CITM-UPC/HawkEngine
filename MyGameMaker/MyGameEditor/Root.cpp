@@ -17,23 +17,16 @@ bool  Root::Awake()
 
     auto& go = currentScene->emplaceChild();
     go.SetName("House");
-    auto meshRenderer = go.AddComponent<MeshRenderer>();
     auto mesh = std::make_shared<Mesh>();
-    auto image = std::make_shared<Image>();
-    auto material = std::make_shared<Material>();
     mesh->LoadMesh("BakerHouse.fbx");
-    image->LoadTexture("Baker_house.png");
-    material->setImage(image);
-    meshRenderer->SetMesh(mesh);
-    meshRenderer->SetMaterial(material);
+    AddMeshRenderer(go, mesh, "Baker_house.png");
 
     return true;
 }
 
-bool Root::Start() 
+bool Root::Start()
 { 
     sceneManagement.Start();
-
 
     return true;
 }
@@ -45,27 +38,6 @@ bool Root::Update(double dt)
     return true; 
 }
 
-void Root::CreateObject(ObjectType type)
-{    
-    switch (type)
-	{
-	case ObjectType::Empty:
-        CreateEmptyObject("EmptyGameObject");
-		break;
-	case ObjectType::Cube:
-        CreateCubeObject("Cube");
-		break;
-	case ObjectType::Sphere:
-        CreateSphereObject("Sphere");
-		break;
-	case ObjectType::Plane:
-        CreatePlaneObject("Plane");
-		break;
-	default:
-		break;
-	}
-}
-
 void Root::CreateEmptyObject(std::string name)
 {
 	auto& go = currentScene->emplaceChild();
@@ -74,55 +46,46 @@ void Root::CreateEmptyObject(std::string name)
 
 void Root::CreateCubeObject(std::string name)
 {
-	auto& go = currentScene->emplaceChild();
+    auto& go = currentScene->emplaceChild();
     go.SetName(name);
-    auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = std::make_shared<Mesh>();
-    auto image = std::make_shared<Image>();
-    auto material = std::make_shared<Material>();
-    mesh = Mesh::CreateCube();
-    image->LoadTexture("Baker_house.png");
-    material->setImage(image);
-    meshRenderer->SetMesh(mesh);
-    meshRenderer->SetMaterial(material);
+    AddMeshRenderer(go, Mesh::CreateCube());
 }
 
 void Root::CreateSphereObject(std::string name)
 {
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
-    auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = std::make_shared<Mesh>();
-    auto image = std::make_shared<Image>();
-    auto material = std::make_shared<Material>();
-    mesh = Mesh::CreateSphere();
-    image->LoadTexture("Baker_house.png");
-    material->setImage(image);
-    meshRenderer->SetMesh(mesh);
-    meshRenderer->SetMaterial(material);
+    AddMeshRenderer(go, Mesh::CreateSphere());
 }
 
 void Root::CreatePlaneObject(std::string name)
 {
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
-    auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = std::make_shared<Mesh>();
-    auto image = std::make_shared<Image>();
-    auto material = std::make_shared<Material>();
-    mesh = Mesh::CreatePlane();
-    image->LoadTexture("Baker_house.png");
-    material->setImage(image);
-    meshRenderer->SetMesh(mesh);
-    meshRenderer->SetMaterial(material);
+    AddMeshRenderer(go, Mesh::CreatePlane());
 }
 
 void Root::CreateMeshObject(std::string name, std::shared_ptr<Mesh> mesh)
 {
+    if (!mesh) {
+        std::cerr << "Error: Invalid mesh provided to CreateMeshObject" << std::endl;
+        return;
+    }
+    
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
+    AddMeshRenderer(go, mesh);
+}
+
+void Root::AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std::string& texturePath)
+{
     auto meshRenderer = go.AddComponent<MeshRenderer>();
+    auto image = std::make_shared<Image>();
+    auto material = std::make_shared<Material>();
+    image->LoadTexture(texturePath);
+    material->setImage(image);
     meshRenderer->SetMesh(mesh);
+    meshRenderer->SetMaterial(material);
 }
 
 void Root::RemoveGameObject(std::string gameObject)

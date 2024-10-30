@@ -30,12 +30,13 @@ public:
 
     bool CleanUp() { return true; }
 
-    void CreateObject(ObjectType type);
     void CreateEmptyObject(std::string name);
     void CreateCubeObject(std::string name);
     void CreateSphereObject(std::string name);
     void CreatePlaneObject(std::string name);
     void CreateMeshObject(std::string name, std::shared_ptr<Mesh> mesh);
+
+    void AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std::string& texturePath = "default.png");
 
     void RemoveGameObject(std::string name);
 

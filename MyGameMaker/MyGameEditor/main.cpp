@@ -230,16 +230,13 @@ static void display_func() {
 	glm::vec3 rayDir = GetMousePickDir(Application->input->GetMouseX(), Application->input->GetMouseY(), Application->window->width(), Application->window->height());
 	DrawRay(rayStartPos, rayDir);
 
-	//Application->ElMesh.Draw();
+	Application->root->sceneManagement.Update(0.16f);
 
-	// TODO cambiar esto de sitio
-	/*for (auto& object : Application->root->currentScene->children()) 
+	/*for (auto& object : Application->root->currentScene->children())
 	{
-		
-		if (object.HasComponent<MeshRenderer>()) {
-
+		if (object.HasComponent<MeshRenderer>())
+		{
 			BoundingBox bbox = object.GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
-
 			bbox = object.GetTransform()->GetMatrix() * bbox;
 
 			if (CheckRayAABBCollision(rayStartPos, rayDir, bbox) && Application->input->GetMouseButton(1) == KEY_DOWN)
@@ -249,23 +246,6 @@ static void display_func() {
 			}
 		}
 	}*/
-
-	Application->root->sceneManagement.Update(0.16f);
-
-	for (auto& object : Application->root->currentScene->children())
-	{
-		if (object.HasComponent<MeshRenderer>()) {
-			BoundingBox bbox = object.GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
-			bbox = object.GetTransform()->GetMatrix() * bbox;
-
-			if (CheckRayAABBCollision(rayStartPos, rayDir, bbox) && Application->input->GetMouseButton(1) == KEY_DOWN)
-			{
-				std::cout << "Hit: " << object.GetName();
-				Application->input->SetSelectedGameObject(std::make_shared<GameObject>(object));
-			}
-		}
-	}
-
 }
 
 void PauCode2(MyGUI* gui) {
