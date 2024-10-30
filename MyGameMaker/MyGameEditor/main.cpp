@@ -232,7 +232,7 @@ static void display_func() {
 
 	Application->root->sceneManagement.Update(0.16f);
 
-	/*for (auto& object : Application->root->currentScene->children())
+	for (auto& object : Application->root->currentScene->children())
 	{
 		if (object.HasComponent<MeshRenderer>())
 		{
@@ -245,7 +245,7 @@ static void display_func() {
 				Application->input->SetSelectedGameObject(std::make_shared<GameObject>(object));
 			}
 		}
-	}*/
+	}
 }
 
 void PauCode2(MyGUI* gui) {

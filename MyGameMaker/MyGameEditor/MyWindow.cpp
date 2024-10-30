@@ -72,10 +72,8 @@ bool Window::ProcessEvents(IEventProcessor* event_processor) {
         if (event_processor) event_processor->processEvent(e);
         switch (e.type) {
         case SDL_DROPFILE:
-
-            printf("A file was dropped");
-            return true;
-
+            
+			break;
         case SDL_QUIT: 
             printf("Closing application");
             Close(); 

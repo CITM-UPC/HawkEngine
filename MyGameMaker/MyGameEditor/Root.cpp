@@ -25,7 +25,7 @@ bool  Root::Awake()
 }
 
 bool Root::Start()
-{ 
+{
     sceneManagement.Start();
 
     return true;
@@ -84,6 +84,7 @@ void Root::AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std
     auto material = std::make_shared<Material>();
     image->LoadTexture(texturePath);
     material->setImage(image);
+    meshRenderer->SetImage(image);
     meshRenderer->SetMesh(mesh);
     meshRenderer->SetMaterial(material);
 }

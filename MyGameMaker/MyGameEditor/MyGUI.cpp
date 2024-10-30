@@ -118,40 +118,9 @@ bool MyGUI::PreUpdate() {
 	return true;
 }
 
-bool MyGUI::Update(double dt) { 
-
-	//Render();
-
-	////move the transform of the camera
-	//
-
-
-	//if (ImGui::IsKeyDown(ImGuiKey_W)) {
-	//	camera.transform().translate(-camera.transform().fwd() * 0.1);
-	//}
-	//if (ImGui::IsKeyDown(ImGuiKey_S)) camera.transform().translate(camera.transform().fwd() * 0.1);
-	//if (ImGui::IsKeyDown(ImGuiKey_A)) camera.transform().translate(-camera.transform().left() * 0.1);
-	//if (ImGui::IsKeyDown(ImGuiKey_D)) camera.transform().translate(camera.transform().left() * 0.1);
-	//if (ImGui::IsKeyDown(ImGuiKey_Q)) camera.transform().translate(-camera.transform().up() * 0.1);
-	//if (ImGui::IsKeyDown(ImGuiKey_E)) camera.transform().translate(camera.transform().up() * 0.1);
-	////rotate the transform of the camera
-	//
-	//if (ImGui::IsKeyDown(ImGuiKey_LeftArrow)) {
-	//	camera.transform().rotate(0.02, vec3(0, 1, 0));
-	//}
-	//if (ImGui::IsKeyDown(ImGuiKey_RightArrow)) {
-	//	camera.transform().rotate(-0.02, vec3(0, 1, 0));
-	//}
-	//if (ImGui::IsKeyDown(ImGuiKey_UpArrow)) camera.transform().rotate(0.02, camera.transform().left());
-	//if (ImGui::IsKeyDown(ImGuiKey_DownArrow)) camera.transform().rotate(-0.02, camera.transform().left());
-
-
-
-
-	//Application->window->SwapBuffers();
-
+bool MyGUI::Update(double dt) 
+{
 	return true; 
-
 }
 
 void RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene);

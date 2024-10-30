@@ -156,6 +156,8 @@ bool Input::processSDLEvents()
         }
         case SDL_DROPFILE:
         {
+            std::cout << "File dropped on window: " << event.drop.file << std::endl;
+
             // Just flag event here
             // This code elsewhere
             std::string fileDir = event.drop.file;
