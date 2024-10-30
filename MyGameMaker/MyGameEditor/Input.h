@@ -74,7 +74,7 @@ public:
 
 	void SetSelectedGameObject(std::shared_ptr<GameObject> gameObject) 
 	{
-		selectedObject = gameObject;
+		if (gameObject != selectedObject) selectedObject = gameObject;
 	}
 
 	std::shared_ptr<GameObject> GetSelectedGameObject() const 

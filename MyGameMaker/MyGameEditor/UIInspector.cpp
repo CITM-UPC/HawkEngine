@@ -56,13 +56,13 @@ bool UIInspector::Draw()
 				ImGui::Separator();
 
 				glm::dvec3 currentPosition = transform->GetPosition();
-				// glm::dvec3 currentRotation = transform->GetRotation();
-				// glm::dvec3 currentScale = transform->GetScale();
+				glm::dvec3 currentRotation = transform->GetEulerAngles();
+				glm::dvec3 currentScale = transform->GetScale();
 
 				float pos[3] = { static_cast<float>(currentPosition.x), static_cast<float>(currentPosition.y), static_cast<float>(currentPosition.z) };
 				// Ojo que hay que castear a grados creo
-				// float rot[3] = { static_cast<float>(currentRotation.x), static_cast<float>(currentRotation.y), static_cast<float>(currentRotation.z) };
-				// float sca[3] = { static_cast<float>(currentScale.x), static_cast<float>(currentScale.y), static_cast<float>(currentScale.z) };
+				float rot[3] = { static_cast<float>(currentRotation.x), static_cast<float>(currentRotation.y), static_cast<float>(currentRotation.z) };
+				float sca[3] = { static_cast<float>(currentScale.x), static_cast<float>(currentScale.y), static_cast<float>(currentScale.z) };
 
 				if (ImGui::DragFloat3("Postition", pos, 0.1f))
 				{
@@ -71,21 +71,21 @@ bool UIInspector::Draw()
 					transform->Translate(deltaPos);
 				}
 
-			/*	if (ImGui::DragFloat3("Rotation", rot, 0.1f))
+				if (ImGui::DragFloat3("Rotation", rot, 0.1f))
 				{
-					glm::dvec3 newRot = glm::radians(glm::dvec3(rot[0], rot[1], rot[2]));
-					glm::dvec3 deltaRot = newRot - currentRot;
-					transform->Rotate(deltaRot.x, glm::dvec3(1, 0, 0));
-					transform->Rotate(deltaRot.y, glm::dvec3(0, 1, 0));
-					transform->Rotate(deltaRot.z, glm::dvec3(0, 0, 1));
-				}*/
+					glm::dvec3 newRotation = { rot[0], rot[1], rot[2] };
+					glm::dvec3 deltaRot = newRotation - currentRotation;
+					transform->Rotate(deltaRot.x, { 1, 0, 0 });
+					transform->Rotate(deltaRot.y, { 0, 1, 0 });
+					transform->Rotate(deltaRot.z, { 0, 0, 1 });
+				}
 
-				/*if (ImGui::DragFloat3("Scale"), scale, 0.1f, 0.01f, 100.0f)
+				if (ImGui::DragFloat3("Scale", sca, 0.1f))
 				{
-					glm::dvec3 newScale = { scale[0], scale[1], scale[2] };
-					glm::dvec3 deltaScale = newScale / currentScale;
+					glm::dvec3 newScale = { sca[0], sca[1], sca[2] };
+					glm::dvec3 deltaScale = newScale - currentScale;
 					transform->Scale(deltaScale);
-				}*/
+				}
 
 				// Methods to rotate and scale
 

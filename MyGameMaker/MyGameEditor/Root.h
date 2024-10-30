@@ -30,14 +30,12 @@ public:
 
     bool CleanUp() { return true; }
 
-    std::shared_ptr<GameObject> CreateObject(ObjectType type);
-    
-    std::shared_ptr<GameObject> CreateEmptyObject(std::string name);
-    std::shared_ptr<GameObject> CreateCubeObject(std::string name);
-    std::shared_ptr<GameObject> CreateSphereObject(std::string name);
-    std::shared_ptr<GameObject> CreatePlaneObject(std::string name);
-
-    std::shared_ptr<GameObject> CreateMeshObject(std::string name, std::shared_ptr<Mesh> mesh);
+    void CreateObject(ObjectType type);
+    void CreateEmptyObject(std::string name);
+    void CreateCubeObject(std::string name);
+    void CreateSphereObject(std::string name);
+    void CreatePlaneObject(std::string name);
+    void CreateMeshObject(std::string name, std::shared_ptr<Mesh> mesh);
 
     void RemoveGameObject(std::string name);
 

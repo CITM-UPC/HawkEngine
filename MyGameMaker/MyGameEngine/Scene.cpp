@@ -43,16 +43,6 @@ void Scene::OnDisable()
 	}
 }
 
-void Scene::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
-{
-	//removeChild(*gameObject);
-}
-
-void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
-{
-	emplaceChild(*gameObject);
-}
-
 std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name) 
 {
 	for (auto& child : children())

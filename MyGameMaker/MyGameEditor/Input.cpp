@@ -7,6 +7,7 @@
 #include "MyWindow.h"
 #include "MyGameEngine/MeshRendererComponent.h"
 #include "MyGameEngine/Image.h"
+#include "MyGameEngine/Material.h"
 #include <SDL2/SDL.h> // idk what to do to remove this
 #include <string>
 #include <iostream>
@@ -183,8 +184,10 @@ bool Input::processSDLEvents()
 				{
 					auto meshRenderer = selectedObject->GetComponent<MeshRenderer>();
 					auto image = std::make_shared<Image>();
+                    auto material = std::make_shared<Material>();
 					image->LoadTexture(fileDir);
-					meshRenderer->SetImage(image);
+                    material->setImage(image);
+					meshRenderer->SetMaterial(material);
 				}
             }
             SDL_free(event.drop.file);

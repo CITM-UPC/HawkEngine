@@ -20,9 +20,6 @@ public:
 	void OnEnable();
 	void OnDisable();
 
-	void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
-	void AddGameObject(std::shared_ptr<GameObject> gameObject);
-
 	std::shared_ptr<GameObject> FindGameObjectbyName(const std::string& name);
 	std::shared_ptr<GameObject> FindGameObjectbyTag(const std::string& tag);
 
