@@ -203,46 +203,80 @@ void Mesh::Draw() const
 
 void Mesh::LoadMesh(const char* file_path) 
 {
+	cout << endl << file_path;
 
-    cout << endl << file_path;
+	const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
 
-    const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
-  
-    if (scene != nullptr && scene->HasMeshes()) {
-        for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-            size_t num_vertices = scene->mMeshes[i]->mNumVertices;
-            glm::vec3* vertex = new glm::vec3[num_vertices * 3];
-            memcpy(vertex, scene->mMeshes[i]->mVertices, sizeof(float) * num_vertices * 3);
+	if (scene != nullptr && scene->HasMeshes()) {
+		std::vector<glm::vec3> all_vertices;
+		std::vector<unsigned int> all_indices;
+		std::vector<glm::vec2> all_texCoords;
+		std::vector<glm::vec3> all_normals;
+		std::vector<glm::u8vec3> all_colors;
 
+		unsigned int vertex_offset = 0;
 
-            if (scene->mMeshes[i]->HasFaces()) {
-                size_t num_index = scene->mMeshes[i]->mNumFaces * 3;
-                unsigned int* index = new unsigned int[num_index]; // assume each face is a triangle
-                for (unsigned int j = 0; j < scene->mMeshes[i]->mNumFaces; ++j) {
-                    memcpy(&index[j * 3], scene->mMeshes[i]->mFaces[j].mIndices, 3 * sizeof(unsigned int));
-                }
-				 Load(vertex,num_vertices,index,num_index);
-            }
-            
-            if (scene->mMeshes[i]->HasTextureCoords(0)) {
-                glm::vec2* texCoords = new glm::vec2[num_vertices];
-                for (size_t j = 0; j < num_vertices; ++j) {
-                    texCoords[j] = glm::vec2(
-                        scene->mMeshes[i]->mTextureCoords[0][j].x,
-                        -scene->mMeshes[i]->mTextureCoords[0][j].y
-                    );
-                }
-                loadTexCoords(texCoords, num_vertices);
-                delete[] texCoords;
-            }
-			
-           
-        }
-        aiReleaseImport(scene);
-    }
-    else {
-        // Handle error
-    }
+		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+			aiMesh* mesh = scene->mMeshes[i];
+
+			// Copy vertices
+			for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+				all_vertices.push_back(glm::vec3(mesh->mVertices[j].x, mesh->mVertices[j].y, mesh->mVertices[j].z));
+			}
+
+			// Copy indices
+			for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+				aiFace& face = mesh->mFaces[j];
+				for (unsigned int k = 0; k < face.mNumIndices; k++) {
+					all_indices.push_back(face.mIndices[k] + vertex_offset);
+				}
+			}
+
+			// Copy texture coordinates
+			if (mesh->HasTextureCoords(0)) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_texCoords.push_back(glm::vec2(mesh->mTextureCoords[0][j].x, -mesh->mTextureCoords[0][j].y));
+				}
+			}
+
+			// Copy normals
+			if (mesh->HasNormals()) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_normals.push_back(glm::vec3(mesh->mNormals[j].x, mesh->mNormals[j].y, mesh->mNormals[j].z));
+				}
+			}
+
+			// Copy colors
+			if (mesh->HasVertexColors(0)) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_colors.push_back(glm::u8vec3(mesh->mColors[0][j].r * 255, mesh->mColors[0][j].g * 255, mesh->mColors[0][j].b * 255));
+				}
+			}
+
+			vertex_offset += mesh->mNumVertices;
+		}
+
+		// Load the combined mesh data
+		Load(all_vertices.data(), all_vertices.size(), all_indices.data(), all_indices.size());
+
+		if (!all_texCoords.empty()) {
+			loadTexCoords(all_texCoords.data(), all_texCoords.size());
+		}
+
+		if (!all_normals.empty()) {
+			LoadNormals(all_normals.data(), all_normals.size());
+		}
+
+		if (!all_colors.empty()) {
+			LoadColors(all_colors.data(), all_colors.size());
+		}
+
+		aiReleaseImport(scene);
+	}
+	else {
+		// Handle error
+		cout << "Error loading mesh: " << file_path << endl;
+	}
 }
 
 std::shared_ptr<Mesh> Mesh::CreateCube() 
