@@ -13,7 +13,7 @@
 
 App::App() {
 
-	window = new Window("Who is George" , 1280,720);
+	window = new Window("George died" , 1280,720);
 
 	input = new Input(this);
 

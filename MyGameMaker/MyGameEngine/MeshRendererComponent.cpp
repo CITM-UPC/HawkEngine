@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Image.h"
+#include <iostream>
 
 MeshRenderer::MeshRenderer(std::weak_ptr<GameObject> owner) : Component(owner) {}
 
@@ -72,14 +73,9 @@ void MeshRenderer::Render() const
         material->bind();
     }
 
-    if (mesh) 
+    if (mesh)
     {    
-        glPushMatrix();
-        glMultMatrixd(owner.lock()->GetTransform()->GetData()); 
-
         mesh->Draw();
-
-        glPopMatrix();
     }
 
     if (material)

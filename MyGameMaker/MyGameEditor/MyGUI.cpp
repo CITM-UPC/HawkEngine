@@ -148,7 +148,7 @@ bool MyGUI::Update(double dt) {
 
 }
 
-void RenderSceneHierarchy(std::vector< std::shared_ptr<GameObject>>& objects);
+void RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene);
 
 bool MyGUI::PostUpdate() { 
 	
@@ -171,7 +171,7 @@ void MyGUI::Render() {
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	RenderSceneHierarchy(Application->root->children);
+	RenderSceneHierarchy(Application->root->currentScene);
 
 	if (UIconsolePanel) {
 		UIconsolePanel->Draw();
@@ -195,30 +195,12 @@ void MyGUI::processEvent(const SDL_Event& event) {
 
 void DrawSceneObject(GameObject& obj);
 
-void RenderSceneHierarchy(std::vector< std::shared_ptr<GameObject>>  &objects) {
-	ImGui::Begin("Scene Hierarchy"); 
+void RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene) {
+	ImGui::Begin("Scene Hierarchy");
 
-	auto it = objects.begin();
-
-	for (int i = 0; i < objects.size(); ++i) {
-
-		if (objects[i]) {
-			DrawSceneObject(*objects[i]);
-		}
-
+	for (auto& obj : currentScene->children()) {
+		DrawSceneObject(obj);
 	}
-	
-
-	//for (auto it = objects.begin(); it != objects.end();) {
-
-	//	if (*it) {
-	//		DrawSceneObject(**it); // Draw each object in the scene
-	//	}
-	//	else {
-	//		continue;
-	//	}
-	//	it++;
-	//}
 
 	ImGui::End(); 
 }
@@ -228,7 +210,7 @@ void RenderSceneHierarchy(std::vector< std::shared_ptr<GameObject>>  &objects) {
 
 void DrawSceneObject(GameObject& obj) {
 	// Create a tree node for the current object
-	bool open = ImGui::TreeNode(obj.GetName().c_str()); 
+	bool open = ImGui::TreeNode(obj.GetName().c_str());
 
 	if (open) {
 		// If the node is open, draw its children
@@ -239,12 +221,10 @@ void DrawSceneObject(GameObject& obj) {
 	}
 
 	ImGui::SameLine(); // Place a button next to the tree node
-	if (ImGui::Button("Remove")) {
-		
-
+	if (ImGui::Button("Remove")) 
+	{
 		std::cout << "Remove " << obj.GetName();
-		Application->root->RemoveGameObject(obj.GetName());
-
+		//Application->root->RemoveGameObject(std::make_shared<GameObject>(obj.GetName()));
 	}
 }
 

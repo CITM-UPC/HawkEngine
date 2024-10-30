@@ -66,20 +66,16 @@ bool  Root::Awake() {
     padre->emplaceChild(hijo);
 
     children.push_back(padre);*/
-    sceneManagement.CreateScene("Scene");
-    currentScene = sceneManagement.GetActiveScene();
-    auto object1 = CreateGameObject("MarcoPresidente", false);
-    auto mesh = Mesh::CreateCube();
-    auto meshRenderer = object1->AddComponent<MeshRenderer>();
-    meshRenderer->SetMesh(mesh);
+    /*auto object1 = CreateEmptyObject("Cube");
     auto image = make_shared<Image>();
     image->LoadTexture("Baker_house.png");
     auto material = make_shared<Material>();
     material->setImage(image);
+    auto meshRenderer = object1->GetComponent<MeshRenderer>();
     meshRenderer->SetMaterial(material);
-    currentScene->AddGameObject(object1);
+    currentScene->AddGameObject(object1);*/
 
-    auto MarcoVicePresidente = CreateGameObject("MarcoVicePresidente", false);
+   /* auto MarcoVicePresidente = CreateEmptyObject("House");
     MarcoVicePresidente->GetTransform()->GetPosition() = vec3(-3, 0, 0);
     auto meshRenderer2 = MarcoVicePresidente->AddComponent<MeshRenderer>();
     auto mesh2 = make_shared<Mesh>();
@@ -89,65 +85,130 @@ bool  Root::Awake() {
     image2->LoadTexture("Baker_house2.png");
     material2->setImage(image2);
     meshRenderer2->SetMesh(mesh2);
-    meshRenderer2->SetMaterial(material2);
-
-    currentScene->AddGameObject(MarcoVicePresidente);
+    meshRenderer2->SetMaterial(material2);*/
+    
+    sceneManagement.CreateScene("Scene");
+    currentScene = sceneManagement.GetActiveScene();
 
     return true;
 }
 
 bool Root::Start() 
 { 
-	sceneManagement.Start();
+    sceneManagement.Start();
 
     return true;
 }
 
-bool Root::Update(double dt) { 
-
-    /*for (shared_ptr<GameObject> object : children) 
-    {
-        object->Update(dt);
-    }*/
-
+bool Root::Update(double dt) 
+{ 
     sceneManagement.Update(dt);
+
+    for (auto& go : currentScene->children())
+	{
+		if (go.HasComponent<MeshRenderer>())
+		{
+			if (!go.GetComponent<MeshRenderer>()->GetMesh())
+			{
+				std::cout << "Mesh is null" << std::endl;
+                std::cout << "Name: " << go.GetName() << std::endl;
+			}
+            else
+            {
+                std::cout << "Mesh is not null" << std::endl;
+            }
+		}
+	}
 
     return true; 
 }
 
-shared_ptr<GameObject> Root::CreateMeshObject(string name, shared_ptr<Mesh> mesh)
+std::shared_ptr<GameObject> Root::CreateObject(ObjectType type)
 {
-    auto object = CreateGameObject(name, false);
-
-    object->AddComponent<MeshRenderer>();
-
-    auto meshRenderer = object->GetComponent<MeshRenderer>();
-
-    // Load Mesh
-    meshRenderer->SetMesh( mesh);
+    auto go = make_shared<GameObject>();
+    
+    switch (type)
+	{
+	case ObjectType::Empty:
+        go = CreateEmptyObject("EmptyGameObject");
+		break;
+	case ObjectType::Cube:
+        go = CreateCubeObject("Cube");
+		break;
+	case ObjectType::Sphere:
+        go = CreateSphereObject("Sphere");
+		break;
+	case ObjectType::Plane:
+        go = CreatePlaneObject("Plane");
+		break;
+	default:
+		break;
+	}
 
     return nullptr;
 }
 
-void Root::RemoveGameObject(std::string name) {
-    for (auto it = children.begin(); it != children.end(); ) {
-        if ((*it)->GetName() == name) {
-            (*it)->Destroy();  // Call Destroy on the object.
-            it = children.erase(it); // Erase returns the next iterator.
-            return; // Exit after removing the object.
-        }
-        else {
-            ++it; // Move to the next element if not removed.
-        }
-    }
+std::shared_ptr<GameObject> Root::CreateEmptyObject(string name)
+{
+	std::shared_ptr<GameObject> go = make_shared<GameObject>(name);
+	
+    return go;
 }
 
-shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
-	shared_ptr<GameObject> object = make_shared<GameObject>(name);
+std::shared_ptr<GameObject> Root::CreateCubeObject(string name)
+{
+	auto go = make_shared<GameObject>(name);
+	go->AddComponent<MeshRenderer>();
+	auto meshRenderer = go->GetComponent<MeshRenderer>();
+	auto mesh = Mesh::CreateCube();
+    auto material = make_shared<Material>();
+    auto image = make_shared<Image>();
+    image->LoadTexture("Baker_house.png");
+    material->setImage(image);
+    meshRenderer->SetMaterial(material);
+    meshRenderer->SetMesh(mesh);
 
-	if (!as_child) {
-		children.push_back(object);
+	return go;
+}
+
+std::shared_ptr<GameObject> Root::CreateSphereObject(string name)
+{
+	auto go = CreateEmptyObject(name);
+	go->AddComponent<MeshRenderer>();
+	auto meshRenderer = go->GetComponent<MeshRenderer>();
+	meshRenderer->SetMesh(Mesh::CreateSphere());
+
+	return go;
+}
+
+std::shared_ptr<GameObject> Root::CreatePlaneObject(string name)
+{
+    auto go = CreateEmptyObject(name);
+    go->AddComponent<MeshRenderer>();
+    auto meshRenderer = go->GetComponent<MeshRenderer>();
+    meshRenderer->SetMesh(Mesh::CreatePlane());
+
+    return go;
+}
+
+std::shared_ptr<GameObject> Root::CreateMeshObject(string name, shared_ptr<Mesh> mesh)
+{
+    auto go = CreateEmptyObject(name);
+    go->AddComponent<MeshRenderer>();
+    auto meshRenderer = go->GetComponent<MeshRenderer>();
+    meshRenderer->SetMesh(mesh);
+
+    return nullptr;
+}
+
+void Root::RemoveGameObject(std::string name)
+{
+	for (auto& go : currentScene->children())
+	{
+		if (go.GetName() == name)
+		{
+			//currentScene->removeChild(go);
+			break;
+		}
 	}
-
-	return object;
 }

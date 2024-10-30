@@ -326,23 +326,22 @@ static void display_func() {
 	//Application->ElMesh.Draw();
 
 	// TODO cambiar esto de sitio
-	for (auto object : Application->root->children) 
+	/*for (auto& object : Application->root->currentScene->children()) 
 	{
-		object->Update(0.16f);
 		
-		if (object->HasComponent<MeshRenderer>()) {
+		if (object.HasComponent<MeshRenderer>()) {
 
-			BoundingBox bbox = object->GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
+			BoundingBox bbox = object.GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
 
-			bbox = object->GetTransform()->GetMatrix() * bbox;
+			bbox = object.GetTransform()->GetMatrix() * bbox;
 
 			if (CheckRayAABBCollision(rayStartPos, rayDir, bbox) && Application->input->GetMouseButton(1) == KEY_DOWN)
 			{
-				std::cout << "Hit: " << object->GetName();
-				Application->input->SetSelectedGameObject(object);
+				std::cout << "Hit: " << object.GetName();
+				Application->input->SetSelectedGameObject(std::make_shared<GameObject>(object));
 			}
 		}
-	}
+	}*/
 
 	//Application->root->sceneManagement.Update(0.16f);
 
