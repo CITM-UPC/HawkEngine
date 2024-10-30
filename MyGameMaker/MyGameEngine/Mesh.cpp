@@ -7,8 +7,11 @@
 #include <vector>
 #include <string>
 #include <GL/glew.h>
-
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
 using namespace std;
 
 Mesh::Mesh() {}
@@ -38,6 +41,7 @@ void Mesh::Load(const glm::vec3* vertices, size_t num_verts, const unsigned int*
         _boundingBox.max = glm::max(_boundingBox.max, glm::dvec3(v));
     }
 
+	CalculateNormals();
 }
 
 void Mesh::drawBoundingBox(const BoundingBox& bbox) {
@@ -69,6 +73,7 @@ void Mesh::loadTexCoords(const glm::vec2* texCoords, size_t num_texCoords)
 void Mesh::LoadNormals(const glm::vec3* normals, size_t num_normals) 
 {
     normals_buffer.LoadData(normals, num_normals * sizeof(glm::vec3));
+    _normals.assign(normals, normals + num_normals);
 }
 
 void Mesh::LoadColors(const glm::u8vec3* colors, size_t num_colors) 
@@ -76,6 +81,27 @@ void Mesh::LoadColors(const glm::u8vec3* colors, size_t num_colors)
     colors_buffer.LoadData(colors, num_colors * sizeof(glm::u8vec3));
 }
 
+void Mesh::CalculateNormals() {
+	_normals.resize(_vertices.size(), glm::vec3(0.0f));
+
+	for (size_t i = 0; i < _indices.size(); i += 3) {
+		glm::vec3 v0 = _vertices[_indices[i]];
+		glm::vec3 v1 = _vertices[_indices[i + 1]];
+		glm::vec3 v2 = _vertices[_indices[i + 2]];
+
+		glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+
+		_normals[_indices[i]] += normal;
+		_normals[_indices[i + 1]] += normal;
+		_normals[_indices[i + 2]] += normal;
+	}
+
+	for (auto& normal : _normals) {
+		normal = glm::normalize(normal);
+	}
+
+	normals_buffer.LoadData(_normals.data(), _normals.size() * sizeof(glm::vec3));
+}
 
 void Mesh::Draw() const 
 {
@@ -103,6 +129,10 @@ void Mesh::Draw() const
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
 	indices_buffer.bind();
+	if (drawWireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
+	}
+
 	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(_indices.size()), GL_UNSIGNED_INT, nullptr);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -112,6 +142,63 @@ void Mesh::Draw() const
 	if (drawBoundingbox) { drawBoundingBox(_boundingBox);
 	}
     glDisable(GL_TEXTURE_2D);
+	if (drawVertexNormals) 
+	{
+		glColor3f(0.0f, 0.0f, 1.0f); // Blue color for vertex normals
+		glBegin(GL_LINES);
+
+		for (size_t i = 0; i < _vertices.size(); ++i) {
+			glm::vec3 end = _vertices[i] + _normals[i] * 0.2f;
+			glVertex3fv(glm::value_ptr(_vertices[i]));
+			glVertex3fv(glm::value_ptr(end));
+		}
+
+		glEnd();
+		glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white
+	}
+
+    if (drawTriangleNormals) {
+		glColor3f(0.0f, 1.0f, 0.0f); // Green color for triangle normals
+		glBegin(GL_LINES);
+
+		for (size_t i = 0; i < _indices.size(); i += 3) {
+			glm::vec3 v0 = _vertices[_indices[i]];
+			glm::vec3 v1 = _vertices[_indices[i + 1]];
+			glm::vec3 v2 = _vertices[_indices[i + 2]];
+
+			glm::vec3 center = (v0 + v1 + v2) / 3.0f;
+			glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+			glm::vec3 end = center + normal * 0.2f;
+
+			glVertex3fv(glm::value_ptr(center));
+			glVertex3fv(glm::value_ptr(end));
+		}
+
+		glEnd();
+		glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white
+
+		if (drawFaceNormals) 
+		{
+			glColor3f(1.0f, 0.0f, 0.0f); // Red color for face normals
+			glm::vec3 center = ((glm::vec3)_boundingBox.min + (glm::vec3)_boundingBox.max) / 2.0f;
+			glBegin(GL_LINES);
+
+			for (size_t i = 0; i < _indices.size(); i += 3) {
+				glm::vec3 v0 = _vertices[_indices[i]];
+				glm::vec3 v1 = _vertices[_indices[i + 1]];
+				glm::vec3 v2 = _vertices[_indices[i + 2]];
+
+				glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+				glm::vec3 end = center + normal * 0.2f;
+
+				glVertex3fv(glm::value_ptr(center));
+				glVertex3fv(glm::value_ptr(end));
+			}
+
+			glEnd();
+			glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white
+		}
+    }
 }
 
 void Mesh::LoadMesh(const char* file_path) 
@@ -148,7 +235,7 @@ void Mesh::LoadMesh(const char* file_path)
                 loadTexCoords(texCoords, num_vertices);
                 delete[] texCoords;
             }
-	
+			
            
         }
         aiReleaseImport(scene);
