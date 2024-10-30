@@ -234,7 +234,7 @@ void DrawSceneObject(GameObject& obj) {
 	if (ImGui::Button("Remove")) 
 	{
 		std::cout << "Remove " << obj.GetName();
-		//Application->root->RemoveGameObject(std::make_shared<GameObject>(obj.GetName()));
+		Application->root->RemoveGameObject(obj.GetName());
 	}
 }
 

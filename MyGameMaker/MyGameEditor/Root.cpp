@@ -8,8 +8,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 Root::Root(App* app) : Module(app) { ; }
 
 bool  Root::Awake() 
@@ -17,8 +15,17 @@ bool  Root::Awake()
     sceneManagement.CreateScene("Scene");
     currentScene = sceneManagement.GetActiveScene();
 
-    CreateObject(ObjectType::Cube);
-
+    auto& go = currentScene->emplaceChild();
+    go.SetName("House");
+    auto meshRenderer = go.AddComponent<MeshRenderer>();
+    auto mesh = std::make_shared<Mesh>();
+    auto image = std::make_shared<Image>();
+    auto material = std::make_shared<Material>();
+    mesh->LoadMesh("BakerHouse.fbx");
+    image->LoadTexture("Baker_house.png");
+    material->setImage(image);
+    meshRenderer->SetMesh(mesh);
+    meshRenderer->SetMaterial(material);
 
     return true;
 }
@@ -59,20 +66,20 @@ void Root::CreateObject(ObjectType type)
 	}
 }
 
-void Root::CreateEmptyObject(string name)
+void Root::CreateEmptyObject(std::string name)
 {
-    auto& go = currentScene->emplaceChild();
-    go.SetName(name);
+	auto& go = currentScene->emplaceChild();
+	go.SetName(name);
 }
 
-void Root::CreateCubeObject(string name)
+void Root::CreateCubeObject(std::string name)
 {
 	auto& go = currentScene->emplaceChild();
     go.SetName(name);
     auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = make_shared<Mesh>();
-    auto image = make_shared<Image>();
-    auto material = make_shared<Material>();
+    auto mesh = std::make_shared<Mesh>();
+    auto image = std::make_shared<Image>();
+    auto material = std::make_shared<Material>();
     mesh = Mesh::CreateCube();
     image->LoadTexture("Baker_house.png");
     material->setImage(image);
@@ -80,14 +87,14 @@ void Root::CreateCubeObject(string name)
     meshRenderer->SetMaterial(material);
 }
 
-void Root::CreateSphereObject(string name)
+void Root::CreateSphereObject(std::string name)
 {
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
     auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = make_shared<Mesh>();
-    auto image = make_shared<Image>();
-    auto material = make_shared<Material>();
+    auto mesh = std::make_shared<Mesh>();
+    auto image = std::make_shared<Image>();
+    auto material = std::make_shared<Material>();
     mesh = Mesh::CreateSphere();
     image->LoadTexture("Baker_house.png");
     material->setImage(image);
@@ -95,14 +102,14 @@ void Root::CreateSphereObject(string name)
     meshRenderer->SetMaterial(material);
 }
 
-void Root::CreatePlaneObject(string name)
+void Root::CreatePlaneObject(std::string name)
 {
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
     auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto mesh = make_shared<Mesh>();
-    auto image = make_shared<Image>();
-    auto material = make_shared<Material>();
+    auto mesh = std::make_shared<Mesh>();
+    auto image = std::make_shared<Image>();
+    auto material = std::make_shared<Material>();
     mesh = Mesh::CreatePlane();
     image->LoadTexture("Baker_house.png");
     material->setImage(image);
@@ -110,22 +117,19 @@ void Root::CreatePlaneObject(string name)
     meshRenderer->SetMaterial(material);
 }
 
-void Root::CreateMeshObject(string name, shared_ptr<Mesh> mesh)
+void Root::CreateMeshObject(std::string name, std::shared_ptr<Mesh> mesh)
 {
     auto& go = currentScene->emplaceChild();
     go.SetName(name);
     auto meshRenderer = go.AddComponent<MeshRenderer>();
-    auto meshComponent = mesh;
-    auto material = make_shared<Material>();
-    meshRenderer->SetMesh(meshComponent);
-    meshRenderer->SetMaterial(material);
+    meshRenderer->SetMesh(mesh);
 }
 
-void Root::RemoveGameObject(std::string name)
+void Root::RemoveGameObject(std::string gameObject)
 {
 	for (auto& go : currentScene->children())
 	{
-		if (go.GetName() == name)
+		if (go.GetName() == gameObject)
 		{
 			//currentScene->removeChild(go);
 			break;

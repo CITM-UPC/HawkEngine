@@ -2,7 +2,9 @@
 #include "MeshRendererComponent.h"
 #include <iostream>
 
-GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)) 
+unsigned int GameObject::nextGid = 1;
+
+GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)), gid(nextGid++)
 {
     transform = AddComponent<Transform_Component>();
 }

@@ -36,7 +36,10 @@ bool UIMainMenuBar::Draw()
 		if (ImGui::BeginMenu("GameObjects"))
 		{
 
-			if (ImGui::MenuItem("Cube")) {}
+			if (ImGui::MenuItem("Create EmptyGameObject")) { Application->root->CreateEmptyObject("EmptyGameObject"); }
+			if (ImGui::MenuItem("Create Cube")) { Application->root->CreateCubeObject("Cube"); }
+			if (ImGui::MenuItem("Create Sphere")) { Application->root->CreateSphereObject("Sphere"); }
+			if (ImGui::MenuItem("Create Plane")) { Application->root->CreatePlaneObject("Plane"); }
 			if (ImGui::MenuItem("SetCheckerTexture")) { Application->input->GetSelectedGameObject()->GetComponent<MeshRenderer>()->GetImage()->LoadCheckerTexture(); }
 			ImGui::EndMenu();
 		}

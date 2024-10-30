@@ -92,9 +92,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>Archivos de origen\Core</Filter>
     </ClCompile>
-    <ClCompile Include="CreateGameObjects.cpp">
-      <Filter>Archivos de origen\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Archivos de origen\Core</Filter>
     </ClCompile>
