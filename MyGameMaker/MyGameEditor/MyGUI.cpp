@@ -15,6 +15,8 @@
 #include "UISettings.h"
 #include "UIMainMenuBar.h"
 #include "UIInspector.h"
+#include "UIHierarchy.h"
+
 
 MyGUI::MyGUI(App* app) : Module(app) {
 	ImGui::CreateContext();
@@ -39,6 +41,10 @@ bool MyGUI::Awake() {
 
 	bool ret = true;
 
+	UIHierarchyPanel = new UIHierarchy(UIType::HIERARCHY, "Hierarchy");
+	elements.push_back(UIHierarchyPanel);
+	ret *= isInitialized(UIHierarchyPanel);
+
 	UIconsolePanel = new UIConsole(UIType::CONSOLE, "Console");
 	elements.push_back(UIconsolePanel);
 	ret *= isInitialized(UIconsolePanel);
@@ -55,7 +61,10 @@ bool MyGUI::Awake() {
 	elements.push_back(UIinspectorPanel);
 	ret *= isInitialized(UIinspectorPanel);
 
-	// Other UI elements
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+	style.WindowRounding = 5.0f;
+	style.FramePadding = ImVec2(5, 5);
 	
 	return ret;
 }
@@ -107,6 +116,7 @@ bool MyGUI::Start() {
 	Application->gui->UIconsolePanel->SetState(true);
 	Application->gui->UIsettingsPanel->SetState(true);
 	Application->gui->UIinspectorPanel->SetState(true);
+	Application->gui->UIMainMenuBarPanel->SetState(true);
 
 	return true;
 }
@@ -123,8 +133,6 @@ bool MyGUI::Update(double dt)
 	return true; 
 }
 
-void RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene);
-
 bool MyGUI::PostUpdate() { 
 	
 	/*ImGui::Render();*/
@@ -134,7 +142,6 @@ bool MyGUI::PostUpdate() {
 
 	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	//if (Application) { SDL_GL_SwapWindow(Application->window->windowPtr()); } // Swap the window buffer
-
 
 	return true; 
 
@@ -146,21 +153,23 @@ void MyGUI::Render() {
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	RenderSceneHierarchy(Application->root->currentScene);
+	if (showHierarchy) {
+		UIHierarchyPanel->Draw();
+	}
 
-	if (UIconsolePanel) {
+	if (showConsole) {
 		UIconsolePanel->Draw();
 	}
 
-	if (UIsettingsPanel) {
+	if (showSettings) {
 		UIsettingsPanel->Draw();
 	}
 
-	if (UIMainMenuBarPanel) {
+	if (showMainMenuBar) {
 		UIMainMenuBarPanel->Draw();
 	}
 
-	if (UIinspectorPanel) {
+	if (showInspector) {
 		UIinspectorPanel->Draw();
 	}
 
@@ -171,39 +180,3 @@ void MyGUI::Render() {
 void MyGUI::processEvent(const SDL_Event& event) {
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
-
-void DrawSceneObject(GameObject& obj);
-
-void RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene) {
-	ImGui::Begin("Scene Hierarchy");
-
-	for (auto& obj : currentScene->children()) {
-		DrawSceneObject(obj);
-	}
-
-	ImGui::End(); 
-}
-
-
-// TODO : Fix forSome Reason only the first button is clickable
-
-void DrawSceneObject(GameObject& obj) {
-	// Create a tree node for the current object
-	bool open = ImGui::TreeNode(obj.GetName().c_str());
-
-	if (open) {
-		// If the node is open, draw its children
-		for (auto& child : obj.children()) {
-			DrawSceneObject(child); // Recursively draw children
-		}
-		ImGui::TreePop(); 
-	}
-
-	ImGui::SameLine(); // Place a button next to the tree node
-	if (ImGui::Button("Remove")) 
-	{
-		std::cout << "Remove " << obj.GetName();
-		Application->root->RemoveGameObject(obj.GetName());
-	}
-}
-

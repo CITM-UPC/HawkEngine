@@ -156,49 +156,51 @@ bool Input::processSDLEvents()
         }
         case SDL_DROPFILE:
         {
-            std::cout << "File dropped on window: " << event.drop.file << std::endl;
-
-            // Just flag event here
-            // This code elsewhere
-            std::string fileDir = event.drop.file;
-            std::string fileNameExt = fileDir.substr(fileDir.find_last_of('\\') + 1);
-
-            std::string fbxName = fileDir.substr(fileDir.find_last_of("\\/") + 1, fileDir.find_last_of('.') - fileDir.find_last_of("\\/") - 1);
-
-            // FBX
-            if (fileDir.ends_with(".fbx") || fileDir.ends_with(".FBX"))
-            {
-                fs::path assetsDir = fs::path(ASSETS_PATH) / "Meshes" / fileNameExt;
-
-                LOG(LogType::LOG_ASSIMP, "Importing %s from: %s", fileNameExt.data(), fileDir.data());
-
-                std::cout << "Importing " << fileNameExt << " from: " << fileDir << std::endl;
-                std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-                mesh->LoadMesh(CopyFBXFileToProject(fileDir).c_str());
-
-                Application->root->CreateMeshObject(fileNameExt,  mesh);
-            }
-
-            // PNG / DDS
-            else if (fileDir.ends_with(".png") || fileDir.ends_with(".dds"))
-            {
-                std::filesystem::copy(fileDir, "Assets", std::filesystem::copy_options::overwrite_existing);
-				if (selectedObject != nullptr)
-				{
-					auto meshRenderer = selectedObject->GetComponent<MeshRenderer>();
-					auto image = std::make_shared<Image>();
-                    auto material = std::make_shared<Material>();
-					image->LoadTexture(fileDir);
-                    material->setImage(image);
-					meshRenderer->SetMaterial(material);
-				}
-            }
+            HandleDropFile(event.drop.file);
+            
             SDL_free(event.drop.file);
             break;
         }
         }
     }
     return true;
+}
+
+void Input::HandleDropFile(const char* dirFileEvent)
+{
+    std::string fileDir = dirFileEvent;
+    std::string fileNameExt = fileDir.substr(fileDir.find_last_of('\\') + 1);
+
+    std::string fbxName = fileDir.substr(fileDir.find_last_of("\\/") + 1, fileDir.find_last_of('.') - fileDir.find_last_of("\\/") - 1);
+
+    // FBX
+    if (fileDir.ends_with(".fbx") || fileDir.ends_with(".FBX"))
+    {
+        fs::path assetsDir = fs::path(ASSETS_PATH) / "Meshes" / fileNameExt;
+
+        LOG(LogType::LOG_ASSIMP, "Importing %s from: %s", fileNameExt.data(), fileDir.data());
+
+        std::cout << "Importing " << fileNameExt << " from: " << fileDir << std::endl;
+        std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+        mesh->LoadMesh(CopyFBXFileToProject(fileDir).c_str());
+
+        Application->root->CreateMeshObject(fileNameExt, mesh);
+    }
+
+    // PNG / DDS
+    else if (fileDir.ends_with(".png") || fileDir.ends_with(".dds"))
+    {
+        std::filesystem::copy(fileDir, "Assets", std::filesystem::copy_options::overwrite_existing);
+        if (selectedObject != nullptr)
+        {
+            auto meshRenderer = selectedObject->GetComponent<MeshRenderer>();
+            auto image = std::make_shared<Image>();
+            auto material = std::make_shared<Material>();
+            image->LoadTexture(fileDir);
+            material->setImage(image);
+            meshRenderer->SetMaterial(material);
+        }
+    }
 }
 
 #pragma region TODO(look what to do with the camera)
@@ -247,20 +249,12 @@ glm::vec3 Input::MouseRayPick()
 }
 #pragma endregion
 
-std::string CopyFBXFileToProject(const std::string& sourceFilePath) {
-
-
+std::string CopyFBXFileToProject(const std::string& sourceFilePath) 
+{
     std::string fileNameExt = sourceFilePath.substr(sourceFilePath.find_last_of('\\') + 1);
     fs::path assetsDir = fs::path(ASSETS_PATH) / "Meshes" / fileNameExt;
 
-
-
-    try {
-        /* to copy the source file to the destination path, overwriting if it already exists*/
-        std::filesystem::copy(sourceFilePath, assetsDir, std::filesystem::copy_options::overwrite_existing);
-
-
-    }
+    try { std::filesystem::copy(sourceFilePath, assetsDir, std::filesystem::copy_options::overwrite_existing);  }
     catch (std::filesystem::filesystem_error& e) {
         std::cerr << "Error copying file: " << e.what() << std::endl;
     }

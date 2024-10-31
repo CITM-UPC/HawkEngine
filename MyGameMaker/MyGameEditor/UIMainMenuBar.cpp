@@ -6,6 +6,13 @@
 #include "MyGameEngine/MeshRendererComponent.h"
 #include "MyGameEngine/Image.h"
 #include "Log.h"
+#include "UIConsole.h"
+#include "UISettings.h"
+#include "UIInspector.h"
+#include "UIHierarchy.h"
+
+
+
 //libraries to open websites
 #include <windows.h>
 #include <shellapi.h>
@@ -41,6 +48,14 @@ bool UIMainMenuBar::Draw()
 			if (ImGui::MenuItem("Sphere")) { Application->root->CreateSphereObject("Sphere"); }
 			if (ImGui::MenuItem("Plane")) { Application->root->CreatePlaneObject("Plane"); }
 			if (ImGui::MenuItem("SetCheckerTexture")) { Application->input->GetSelectedGameObject()->GetComponent<MeshRenderer>()->GetImage()->LoadCheckerTexture(); }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Hierarchy")) { Application->gui->showHierarchy = !Application->gui->showHierarchy; }
+			if (ImGui::MenuItem("Console")) { Application->gui->showConsole = !Application->gui->showConsole; }
+			if (ImGui::MenuItem("Settings")) { Application->gui->showSettings = !Application->gui->showSettings; }
+			if (ImGui::MenuItem("Inspector")) { Application->gui->showInspector = !Application->gui->showInspector; }
 			ImGui::EndMenu();
 		}
 		// Finaliza la barra de menú principal

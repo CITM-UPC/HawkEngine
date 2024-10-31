@@ -10,6 +10,7 @@ enum class UIType
 	DEFAULT,
 	CONSOLE,
 	INSPECTOR,
+	HIERARCHY,
 	UNKNOWN	
 };
 
