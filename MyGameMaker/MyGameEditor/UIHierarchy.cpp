@@ -46,7 +46,7 @@ void UIHierarchy::RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene) {
 	//ImGui::End();
 }
 
-void UIHierarchy::DrawSceneObject(GameObject& obj) 
+void UIHierarchy::DrawSceneObject(GameObject& obj)
 {
 	bool open = ImGui::TreeNode(obj.GetName().c_str());
 
@@ -61,6 +61,6 @@ void UIHierarchy::DrawSceneObject(GameObject& obj)
 	if (ImGui::Button("Remove"))
 	{
 		std::cout << "Remove " << obj.GetName();
-		Application->root->RemoveGameObject(obj.GetName());
+		//Application->root->currentScene->removeChildDef(obj);
 	}
 }

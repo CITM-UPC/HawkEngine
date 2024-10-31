@@ -96,6 +96,7 @@ void Root::RemoveGameObject(std::string gameObject)
 		if (go.GetName() == gameObject)
 		{
 			//currentScene->removeChild(go);
+            //currentScene->removeChildDef(go);
 			break;
 		}
 	}

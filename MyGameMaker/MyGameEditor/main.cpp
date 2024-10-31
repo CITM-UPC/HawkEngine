@@ -242,7 +242,7 @@ static void display_func() {
 			if (CheckRayAABBCollision(rayStartPos, rayDir, bbox) && Application->input->GetMouseButton(1) == KEY_DOWN)
 			{
 				std::cout << "Hit: " << object.GetName();
-				Application->input->SetSelectedGameObject(std::make_shared<GameObject>(object));
+				Application->input->SetSelectedGameObject(&object);
 			}
 		}
 	}
@@ -250,7 +250,7 @@ static void display_func() {
 
 void PauCode2(MyGUI* gui) {
 
-	if (Application->window->ProcessEvents(gui) && Application->window->IsOpen()) {
+	if (Application->window->IsOpen()) {
 
 		const auto t0 = hrclock::now();
 		display_func();

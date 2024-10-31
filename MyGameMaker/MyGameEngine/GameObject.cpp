@@ -21,6 +21,40 @@ GameObject::~GameObject()
     }
 }
 
+GameObject::GameObject(const GameObject& other) :
+    name(other.name),
+    gid(nextGid++),
+    active(other.active),
+    transform(std::make_shared<Transform_Component>(*other.transform)),
+    mesh(other.mesh),
+    tag(other.tag),
+    cachedComponentType(typeid(Component))
+{
+    for (const auto& component : other.components) {
+        components[component.first] = component.second->Clone();
+    }
+}
+
+GameObject& GameObject::operator=(const GameObject& other) {
+    if (this != &other) 
+    {
+        name = other.name;
+        gid = nextGid++;
+        active = other.active;
+        transform = std::make_shared<Transform_Component>(*other.transform);
+        mesh = other.mesh;
+        tag = other.tag;
+
+        components.clear();
+
+        for (const auto& component : other.components) 
+        {
+            components[component.first] = component.second->Clone();
+        }
+    }
+    return *this;
+}
+
 void GameObject::Start()
 {
     for (auto& component : components)

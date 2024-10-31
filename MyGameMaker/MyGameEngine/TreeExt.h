@@ -24,6 +24,11 @@ public:
 		return _children.back();
 	}
 
+	void removeChildDef(const T& child) 
+	{
+		_children.remove(child);
+	}
+
 	void removeChild(const T& child) { return _children.remove(std::forward(child)); }
 	void AddChild(T& child) { _children.push_back(child); child._parent = static_cast<T*>(this); }
 };

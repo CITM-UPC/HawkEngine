@@ -19,6 +19,9 @@ public:
     GameObject(const std::string& name = "GameObject");
     ~GameObject();
 
+    GameObject(const GameObject& other);
+    GameObject& operator=(const GameObject& other);
+
     template <IsComponent T, typename... Args>
     std::shared_ptr<T> AddComponent(Args&&... args);
 

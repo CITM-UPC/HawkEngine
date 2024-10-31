@@ -72,12 +72,12 @@ public:
 		return mouse_y_motion;
 	}
 
-	void SetSelectedGameObject(std::shared_ptr<GameObject> gameObject) 
+	void SetSelectedGameObject(GameObject* gameObject)
 	{
-		if (gameObject != selectedObject) selectedObject = gameObject;
+		selectedObject = gameObject;
 	}
 
-	std::shared_ptr<GameObject> GetSelectedGameObject() const 
+	GameObject* GetSelectedGameObject() const
 	{
 		return selectedObject;
 	}
@@ -94,7 +94,7 @@ private:
 	int mouse_y_motion;
 	float dx;
 	float dy;
-	std::shared_ptr<GameObject> selectedObject;
+	GameObject* selectedObject = nullptr;
 };
 
 #endif // !__INPUT_H__
