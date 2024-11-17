@@ -37,11 +37,11 @@ public:
     std::shared_ptr<GameObject> CreateGameObject(std::string name, bool as_child = false);
 
     void AddMeshRenderer(GameObject& go, std::shared_ptr<   Mesh> mesh, const std::string& texturePath = "default.png");
-    void RemoveGameObject(std::string name);
+    void RemoveGameObject(GameObject& obj);
 
 public:
 
-	std::vector< std::shared_ptr<GameObject> > children;
+	//std::vector< std::shared_ptr<GameObject> > children;
     
     SceneManagement sceneManagement;
     std::shared_ptr<Scene> currentScene = std::make_shared<Scene>("Scene1");

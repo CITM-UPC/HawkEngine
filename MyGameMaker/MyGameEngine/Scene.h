@@ -3,6 +3,7 @@
 #include <vector>
 #include "TreeExt.h"
 #include "GameObject.h"
+//#include "../MyGameEditor/Root.h"
 
 class Scene : public TreeExt<GameObject>
 {
@@ -31,4 +32,7 @@ public:
 
 private:
 	std::string name;
+
+	friend class Root;
+
 };

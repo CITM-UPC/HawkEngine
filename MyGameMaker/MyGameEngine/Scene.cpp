@@ -5,46 +5,48 @@
 
 void Scene::Start()
 {
-	for (auto& child : children())
+	for (auto it = _children.begin(); it != _children.end(); ++it)
 	{
-		child.Start();
+		it->Start();
 	}
 }
 
 void Scene::Update(float deltaTime)
 {
-	for (auto& child : children())
+	for (auto it = _children.begin(); it != _children.end(); ++it)
 	{
-		child.Update(deltaTime);
+		it->Update(deltaTime);
 	}
 }
 
 void Scene::Destroy()
 {
-	for (auto& child : children())
+
+	for (auto it = _children.begin(); it != _children.end(); ++it)
 	{
-		child.Destroy();
+		it->Destroy();
 	}
 }
 
 void Scene::OnEnable()
 {
-	for (auto& child : children())
+	for (auto it = _children.begin(); it != _children.end(); ++it)
 	{
-		child.OnEnable();
+		it->OnEnable();
 	}
 }
 
 void Scene::OnDisable()
 {
-	for (auto& child : children())
+	for (auto it = _children.begin(); it != _children.end(); ++it)
 	{
-		child.OnDisable();
+		it->OnDisable();
 	}
 }
 
 void Scene::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
 {
+	removeChild(*gameObject);
 	//removeChild(*gameObject);
 }
 
@@ -55,7 +57,7 @@ void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
 
 std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name) 
 {
-	for (auto& child : children())
+	for (auto& child : _children)
 	{
 		if (child.GetName() == name)
 		{
@@ -67,7 +69,7 @@ std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name)
 
 std::shared_ptr<GameObject> Scene::FindGameObjectbyTag(const std::string& tag)
 {
-	for (auto& child : children())
+	for (auto child : _children)
 	{
 		if (child.CompareTag(tag))
 		{

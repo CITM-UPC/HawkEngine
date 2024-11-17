@@ -68,10 +68,19 @@ bool  Root::Awake() {
     padre->emplaceChild(hijo);
 
     children.push_back(padre);*/
+
+
+
+
     sceneManagement.CreateScene("Scene");
     currentScene = sceneManagement.GetActiveScene();
 
+
+
     auto MarcoVicePresidente = CreateGameObject("BakerHouse", false);
+
+    return true;
+
     MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
     auto mesh = make_shared<Mesh>();
     mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
@@ -115,8 +124,8 @@ shared_ptr<GameObject> Root::CreateMeshObject(string name, shared_ptr<Mesh> mesh
     return nullptr;
 }
 
-void Root::RemoveGameObject(std::string name) {
-    for (auto it = children.begin(); it != children.end(); ) {
+void Root::RemoveGameObject(GameObject& obj) {
+    /*for (auto it = children.begin(); it != children.end(); ) {
         if ((*it)->GetName() == name) {
             if ((*it)->isSelected) {
 				(*it)->isSelected = false;
@@ -129,16 +138,23 @@ void Root::RemoveGameObject(std::string name) {
         else {
             ++it; // Move to the next element if not removed.
         }
-    }
+    }*/
+
+
+
+
+
 }
+
+
 
 shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
 
     string og_name = name;
 
     int num_repeat = 0;
-    for (size_t i = 0; i < children.size(); ++i) {
-        if (children[i]->GetName() == name) {
+    for (size_t i = 0; i < currentScene->children().size(); ++i) {
+        if (currentScene->children()[i].GetName() == name) {
             num_repeat++;
             name = og_name + std::to_string(num_repeat);
 
@@ -155,8 +171,12 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
 	shared_ptr<GameObject> object = make_shared<GameObject>(name);
 
 	if (!as_child) {
-		children.push_back(object);
+        currentScene->_children.push_back(*object);
 	}
+
+    
+
+
 
 	return object;
 }

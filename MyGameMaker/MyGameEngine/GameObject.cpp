@@ -10,11 +10,11 @@ GameObject::GameObject(const std::string& name) : name(name), cachedComponentTyp
 GameObject::~GameObject()
 {
     for (auto& component : components) {
-        component.second->Destroy();
+        component.second.Destroy();
     }
     components.clear();
 
-    for (auto& child : children()) {
+    for (auto& child : _children) {
         child.Destroy();
     }
 }
@@ -23,10 +23,10 @@ void GameObject::Start()
 {
     for (auto& component : components)
     {
-        component.second->Start();
+        component.second.Start();
     }
 
-    for (auto& child : children())
+    for (auto& child : _children)
     {
         child.Start();
     }
@@ -41,10 +41,10 @@ void GameObject::Update(float deltaTime)
 
     for (auto& component : components)
     {
-        component.second->Update(deltaTime);
+        component.second.Update(deltaTime);
     }
     
-    for (auto& child : children())
+    for (auto& child : _children)
 	{
 		child.Update(deltaTime);
 	}
@@ -58,10 +58,10 @@ void GameObject::Destroy()
     
     for (auto& component : components)
 	{
-		component.second->Destroy();
+		component.second.Destroy();
 	}
 
-    for (auto& child : children())
+    for (auto& child : _children)
     {
         child.Destroy();
     }
