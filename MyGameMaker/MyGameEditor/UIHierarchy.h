@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UIElement.h"
-#include "MyGameEngine/Scene.h"
+#include "MyGameEngine/HawkScene.h"
 #include <vector>
 #include <string>
 #include <memory>

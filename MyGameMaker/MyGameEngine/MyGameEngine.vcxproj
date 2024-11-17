@@ -78,6 +78,7 @@
     <ClInclude Include="BufferObject.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HawkScene.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="BufferObject.cpp" />
     <ClCompile Include="CreateGameObjects.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HawkScene.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />

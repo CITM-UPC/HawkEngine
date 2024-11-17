@@ -72,9 +72,10 @@ bool  Root::Awake() {
 
 
 
-    sceneManagement.CreateScene("Scene");
-    currentScene = sceneManagement.GetActiveScene();
+    //sceneManagement.CreateScene("Scene");
+    //currentScene = sceneManagement.GetActiveScene();
 
+    currentScene = std::make_shared<Scene>();
 
 
     auto MarcoVicePresidente = CreateGameObject("BakerHouse", false);
@@ -86,26 +87,32 @@ bool  Root::Awake() {
     mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
 
-    currentScene->AddGameObject(MarcoVicePresidente);
+    currentScene->_children.push_back(MarcoVicePresidente);
+    //currentScene->AddGameObject(MarcoVicePresidente);
 
     return true;
 }
 
 bool Root::Start() 
 { 
-	sceneManagement.Start();
+
+    for (shared_ptr<GameObject> object : currentScene->_children)
+    {
+        object->Start();
+    }
+	//sceneManagement.Start();
 
     return true;
 }
 
 bool Root::Update(double dt) { 
 
-    /*for (shared_ptr<GameObject> object : children) 
+    for (shared_ptr<GameObject> object : currentScene->_children)
     {
         object->Update(dt);
-    }*/
+    }
 
-    sceneManagement.Update(dt);
+    //sceneManagement.Update(dt);
 
     return true; 
 }
@@ -153,8 +160,8 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
     string og_name = name;
 
     int num_repeat = 0;
-    for (size_t i = 0; i < currentScene->children().size(); ++i) {
-        if (currentScene->children()[i].GetName() == name) {
+    for (size_t i = 0; i < currentScene->_children.size(); ++i) {
+        if (currentScene->_children[i]->GetName() == name) {
             num_repeat++;
             name = og_name + std::to_string(num_repeat);
 
@@ -171,7 +178,7 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
 	shared_ptr<GameObject> object = make_shared<GameObject>(name);
 
 	if (!as_child) {
-        currentScene->_children.push_back(*object);
+        currentScene->_children.push_back(object);
 	}
 
     

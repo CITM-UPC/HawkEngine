@@ -46,7 +46,7 @@ void GameObject::Update(float deltaTime)
     
     for (auto& child : _children)
 	{
-		child.Update(deltaTime);
+		child->Update(deltaTime);
 	}
 
     Draw();
@@ -63,7 +63,7 @@ void GameObject::Destroy()
 
     for (auto& child : _children)
     {
-        child.Destroy();
+        child->Destroy();
     }
 }
 

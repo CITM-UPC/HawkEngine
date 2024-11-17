@@ -1,126 +1,126 @@
-#include "Scene.h"
-
-#include "MeshRendererComponent.h"
-#include "Mesh.h"
-
-void Scene::Start()
-{
-	for (auto it = _children.begin(); it != _children.end(); ++it)
-	{
-		it->Start();
-	}
-}
-
-void Scene::Update(float deltaTime)
-{
-	for (auto it = _children.begin(); it != _children.end(); ++it)
-	{
-		it->Update(deltaTime);
-	}
-}
-
-void Scene::Destroy()
-{
-
-	for (auto it = _children.begin(); it != _children.end(); ++it)
-	{
-		it->Destroy();
-	}
-}
-
-void Scene::OnEnable()
-{
-	for (auto it = _children.begin(); it != _children.end(); ++it)
-	{
-		it->OnEnable();
-	}
-}
-
-void Scene::OnDisable()
-{
-	for (auto it = _children.begin(); it != _children.end(); ++it)
-	{
-		it->OnDisable();
-	}
-}
-
-void Scene::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
-{
-	removeChild(*gameObject);
-	//removeChild(*gameObject);
-}
-
-void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
-{
-	emplaceChild(*gameObject);
-}
-
-std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name) 
-{
-	for (auto& child : _children)
-	{
-		if (child.GetName() == name)
-		{
-			return std::make_shared<GameObject>(child);
-		}
-	}
-	return nullptr;
-}
-
-std::shared_ptr<GameObject> Scene::FindGameObjectbyTag(const std::string& tag)
-{
-	for (auto& child : _children)
-	{
-		if (child.CompareTag(tag))
-		{
-			return std::make_shared<GameObject>(child);
-		}
-
-
-	}
-
-	return nullptr;
-}
-
-std::string Scene::GetName() const
-{
-	return name;
-}
-
-void Scene::SetName(const std::string& name)
-{
-	this->name = name;
-}
-
-//std::shared_ptr<GameObject> Scene::CreateEmptyGameObject(const std::string& name)
+//#include "Scene.h"
+//
+//#include "MeshRendererComponent.h"
+//#include "Mesh.h"
+//
+//void Scene::Start()
 //{
-//	auto object = std::make_shared<GameObject>(name);
-//	return object;
+//	for (auto it = _children.begin(); it != _children.end(); ++it)
+//	{
+//		it->Start();
+//	}
 //}
 //
-//std::shared_ptr<GameObject> Scene::CreateCube(const std::string& name)
+//void Scene::Update(float deltaTime)
 //{
-//	auto object = std::make_shared<GameObject>(name);
-//	object->AddComponent<MeshRenderer>();
-//	auto meshRenderer = object->GetComponent<MeshRenderer>();
-//	meshRenderer->SetMesh(Mesh::CreateCube());
-//	return object;
+//	for (auto it = _children.begin(); it != _children.end(); ++it)
+//	{
+//		it->Update(deltaTime);
+//	}
 //}
 //
-//std::shared_ptr<GameObject> Scene::CreateSphere(const std::string& name)
+//void Scene::Destroy()
 //{
-//	auto object = std::make_shared<GameObject>(name);
-//	object->AddComponent<MeshRenderer>();
-//	auto meshRenderer = object->GetComponent<MeshRenderer>();
-//	meshRenderer->SetMesh(Mesh::CreateSphere());
-//	return object;
+//
+//	for (auto it = _children.begin(); it != _children.end(); ++it)
+//	{
+//		it->Destroy();
+//	}
 //}
 //
-//std::shared_ptr<GameObject> Scene::CreatePlane(const std::string& name)
+//void Scene::OnEnable()
 //{
-//	auto object = std::make_shared<GameObject>(name);
-//	object->AddComponent<MeshRenderer>();
-//	auto meshRenderer = object->GetComponent<MeshRenderer>();
-//	meshRenderer->SetMesh(Mesh::CreatePlane());
-//	return object;
+//	for (auto it = _children.begin(); it != _children.end(); ++it)
+//	{
+//		it->OnEnable();
+//	}
 //}
+//
+//void Scene::OnDisable()
+//{
+//	for (auto it = _children.begin(); it != _children.end(); ++it)
+//	{
+//		it->OnDisable();
+//	}
+//}
+//
+//void Scene::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
+//{
+//	removeChild(*gameObject);
+//	//removeChild(*gameObject);
+//}
+//
+//void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
+//{
+//	emplaceChild(*gameObject);
+//}
+//
+//std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name) 
+//{
+//	for (auto& child : _children)
+//	{
+//		if (child.GetName() == name)
+//		{
+//			return std::make_shared<GameObject>(child);
+//		}
+//	}
+//	return nullptr;
+//}
+//
+//std::shared_ptr<GameObject> Scene::FindGameObjectbyTag(const std::string& tag)
+//{
+//	for (auto& child : _children)
+//	{
+//		if (child.CompareTag(tag))
+//		{
+//			return std::make_shared<GameObject>(child);
+//		}
+//
+//
+//	}
+//
+//	return nullptr;
+//}
+//
+//std::string Scene::GetName() const
+//{
+//	return name;
+//}
+//
+//void Scene::SetName(const std::string& name)
+//{
+//	this->name = name;
+//}
+//
+////std::shared_ptr<GameObject> Scene::CreateEmptyGameObject(const std::string& name)
+////{
+////	auto object = std::make_shared<GameObject>(name);
+////	return object;
+////}
+////
+////std::shared_ptr<GameObject> Scene::CreateCube(const std::string& name)
+////{
+////	auto object = std::make_shared<GameObject>(name);
+////	object->AddComponent<MeshRenderer>();
+////	auto meshRenderer = object->GetComponent<MeshRenderer>();
+////	meshRenderer->SetMesh(Mesh::CreateCube());
+////	return object;
+////}
+////
+////std::shared_ptr<GameObject> Scene::CreateSphere(const std::string& name)
+////{
+////	auto object = std::make_shared<GameObject>(name);
+////	object->AddComponent<MeshRenderer>();
+////	auto meshRenderer = object->GetComponent<MeshRenderer>();
+////	meshRenderer->SetMesh(Mesh::CreateSphere());
+////	return object;
+////}
+////
+////std::shared_ptr<GameObject> Scene::CreatePlane(const std::string& name)
+////{
+////	auto object = std::make_shared<GameObject>(name);
+////	object->AddComponent<MeshRenderer>();
+////	auto meshRenderer = object->GetComponent<MeshRenderer>();
+////	meshRenderer->SetMesh(Mesh::CreatePlane());
+////	return object;
+////}

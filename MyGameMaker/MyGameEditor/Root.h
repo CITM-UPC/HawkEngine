@@ -3,7 +3,7 @@
 #include "MyGameEngine/Mesh.h"
 #include "MyGameEngine/GameObject.h"
 #include "MyGameEngine/SceneManagement.h"
-#include "MyGameEngine/Scene.h"
+#include "MyGameEngine/HawkScene.h"
 #include "SceneSerializer.h"
 #include <list>
 
@@ -43,8 +43,8 @@ public:
 
 	//std::vector< std::shared_ptr<GameObject> > children;
     
-    SceneManagement sceneManagement;
-    std::shared_ptr<Scene> currentScene = std::make_shared<Scene>("Scene1");
+    //SceneManagement sceneManagement; /*add name to the hawkScene*/
+    std::shared_ptr<Scene> currentScene = std::make_shared<Scene>();
 
     friend SceneSerializer;
 
