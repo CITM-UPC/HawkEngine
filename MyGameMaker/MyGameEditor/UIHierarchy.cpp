@@ -48,8 +48,8 @@ bool UIHierarchy::Draw() {
 void UIHierarchy::RenderSceneHierarchy(std::shared_ptr<Scene>& currentScene) {
 	//ImGui::Begin("Scene Hierarchy");
 
-	for (size_t i = 0; i < Application->root->currentScene->children().size(); ++i) {
-		DrawSceneObject(Application->root->currentScene->children()[i]);
+	for (size_t i = 0; i < Application->root->currentScene->_children.size(); ++i) {
+		DrawSceneObject(*Application->root->currentScene->_children[i]);
 	}
 
 	//ImGui::End();
@@ -75,8 +75,8 @@ void UIHierarchy::DrawSceneObject(GameObject& obj)
 	
 
 	if (open) {
-		for (auto& child : obj.children()) {
-			DrawSceneObject(const_cast<GameObject &>(child));
+		for (auto& child : obj._children) {
+			DrawSceneObject(const_cast<GameObject &>(*child));
 		}
 		ImGui::TreePop();
 	}

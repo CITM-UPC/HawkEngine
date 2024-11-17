@@ -1,11 +1,12 @@
 #include "GameObject.h"
 #include "MeshRendererComponent.h"
+#include <string>
 #include <iostream>
 
-GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)) 
-{
-    transform = std::make_unique<Transform_Component>( AddComponent<Transform_Component>());
-}
+//GameObject::GameObject(const char* Aname) noexcept : name(std::string(Aname)), cachedComponentType(typeid(Component))
+//{
+//    
+//}
 
 GameObject::~GameObject()
 {
@@ -15,12 +16,15 @@ GameObject::~GameObject()
     components.clear();
 
     for (auto& child : _children) {
-        child.Destroy();
+        child->Destroy();
     }
 }
 
 void GameObject::Start()
 {
+    // no make_unique in the constructor bc it can be marked as noexcept and then the vector class cries
+    transform = std::make_unique<Transform_Component>(AddComponent<Transform_Component>());
+
     for (auto& component : components)
     {
         component.second->Start();
@@ -28,7 +32,7 @@ void GameObject::Start()
 
     for (auto& child : _children)
     {
-        child.Start();
+        child->Start();
     }
 }
 
@@ -46,7 +50,7 @@ void GameObject::Update(float deltaTime)
     
     for (auto& child : _children)
 	{
-		child.Update(deltaTime);
+		child->Update(deltaTime);
 	}
 
     Draw();
@@ -63,7 +67,7 @@ void GameObject::Destroy()
 
     for (auto& child : _children)
     {
-        child.Destroy();
+        child->Destroy();
     }
 }
 
@@ -154,7 +158,10 @@ bool GameObject::CompareTag(const std::string& tag) const
 BoundingBox GameObject::boundingBox() const 
 {
     BoundingBox bbox = localBoundingBox();
-    if (!mesh && children().size()) bbox = children().front().boundingBox();
-    for (const auto& child : children()) bbox = bbox + child.boundingBox();
+    if (!mesh && _children.size()) bbox = _children.front()->boundingBox();
+    for (const auto& child : _children) {
+
+        bbox = bbox + child->boundingBox();
+    }
     return transform->GetMatrix() * bbox;
 }

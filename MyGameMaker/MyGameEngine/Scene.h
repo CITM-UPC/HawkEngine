@@ -5,9 +5,12 @@
 #include "GameObject.h"
 //#include "../MyGameEditor/Root.h"
 
-class Scene : public TreeExt<GameObject>
+class Scene 
 {
 public:
+
+	std::vector<std::shared_ptr<GameObject>> _children;
+
 	Scene(const std::string& name = "Scene") : name(name) {}
 	~Scene() {}
 

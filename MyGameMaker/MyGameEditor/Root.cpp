@@ -77,7 +77,7 @@ bool  Root::Awake() {
 
 
 
-    auto MarcoVicePresidente = CreateGameObject("BakerHouse", false);
+    auto MarcoVicePresidente = CreateGameObject(std::string("BakerHouse"), false);
 
     return true;
 
@@ -153,8 +153,8 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
     string og_name = name;
 
     int num_repeat = 0;
-    for (size_t i = 0; i < currentScene->children().size(); ++i) {
-        if (currentScene->children()[i].GetName() == name) {
+    for (size_t i = 0; i < currentScene->_children.size(); ++i) {
+        if (currentScene->_children[i]->GetName() == name) {
             num_repeat++;
             name = og_name + std::to_string(num_repeat);
 
@@ -168,10 +168,10 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
     }
 
 
-	shared_ptr<GameObject> object = make_shared<GameObject>(name);
+	shared_ptr<GameObject> object = make_shared<GameObject>(name.c_str());
 
 	if (!as_child) {
-        currentScene->_children.push_back(*object);
+        currentScene->_children.push_back(object);
 	}
 
     
@@ -183,23 +183,23 @@ shared_ptr<GameObject> Root::CreateGameObject(string name, bool as_child) {
 
 void Root::CreateEmptyObject(std::string name) 
 {
-	auto go = CreateGameObject(name, false);
+	auto go = CreateGameObject(name.c_str(), false);
 }
 
 void Root::CreateCubeObject(std::string name) {
 
-	auto go = CreateGameObject(name, false);
+	auto go = CreateGameObject(name.c_str(), false);
 	AddMeshRenderer(*go, Mesh::CreateCube(), "Assets/default.png");
 
 }
 void Root::CreateSphereObject(std::string name) {
-    auto go = CreateGameObject(name, false);
+    auto go = CreateGameObject(name.c_str(), false);
     AddMeshRenderer(*go, Mesh::CreateSphere(), "Assets/default.png");
 
 }
 void Root::CreatePlaneObject(std::string name) {
 
-    auto go = CreateGameObject(name, false);
+    auto go = CreateGameObject(name.c_str(), false);
     AddMeshRenderer(*go, Mesh::CreatePlane(), "Assets/default.png");
 }
 

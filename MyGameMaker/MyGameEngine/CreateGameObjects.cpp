@@ -81,7 +81,7 @@ std::shared_ptr<GameObject> GameObject::CreateCube(const std::string& name)
 
 std::shared_ptr<GameObject> GameObject::CreateSphere(const std::string& name)
 {
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name);
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name.c_str());
 	auto meshRenderer = go->AddComponent<MeshRenderer>();
 	auto mesh = std::make_shared<Mesh>();
 
@@ -159,7 +159,7 @@ std::shared_ptr<GameObject> GameObject::CreateSphere(const std::string& name)
 
 std::shared_ptr<GameObject> GameObject::CreatePlane(const std::string& name)
 {
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name);
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name.c_str());
 	auto meshRenderer = go->AddComponent<MeshRenderer>();
 	auto mesh = std::make_shared<Mesh>();
 
@@ -210,7 +210,7 @@ std::shared_ptr<GameObject> GameObject::CreatePlane(const std::string& name)
 
 std::shared_ptr<GameObject> GameObject::CreateQuad(const std::string& name)
 {
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name);
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name.c_str());
 	auto meshRenderer = go->AddComponent<MeshRenderer>();
 	auto mesh = std::make_shared<Mesh>();
 
@@ -261,7 +261,7 @@ std::shared_ptr<GameObject> GameObject::CreateQuad(const std::string& name)
 
 std::shared_ptr<GameObject> GameObject::CreateCylinder(const std::string& name)
 {
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name);
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name.c_str());
 	auto meshRenderer = go->AddComponent<MeshRenderer>();
 	auto mesh = std::make_shared<Mesh>();
 
@@ -340,7 +340,7 @@ std::shared_ptr<GameObject> GameObject::CreateCylinder(const std::string& name)
 
 std::shared_ptr<GameObject> GameObject::CreateCapsule(const std::string& name)
 {
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name);
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(name.c_str());
 	auto meshRenderer = go->AddComponent<MeshRenderer>();
 	auto mesh = std::make_shared<Mesh>();
 

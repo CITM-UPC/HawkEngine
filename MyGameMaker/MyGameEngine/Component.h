@@ -13,9 +13,9 @@ class GameObject;
 class Component
 {
 public:
-	explicit Component(std::weak_ptr<GameObject> owner) : owner(owner) {}
+	explicit Component(std::weak_ptr<GameObject> owner) noexcept : owner(owner) {}
 
-	Component() { ; }
+	Component() noexcept { ; }
 
 	virtual ~Component()  {
 

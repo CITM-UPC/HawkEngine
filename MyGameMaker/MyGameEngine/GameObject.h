@@ -5,6 +5,8 @@
 #include "TreeExt.h"
 #include "Mesh.h"
 #include "BoundingBox.h"
+#include <string>
+
 
 enum class DrawMode
 {
@@ -13,11 +15,31 @@ enum class DrawMode
     PushPopMatrix
 };
 
-class GameObject : public std::enable_shared_from_this<GameObject>, public TreeExt<GameObject>
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
-    GameObject(const std::string& name = "GameObject");
+    explicit GameObject(const char* Aname) noexcept : name(std::string(Aname)), cachedComponentType(typeid(Component))
+    {
+
+    }   
     ~GameObject();
+
+    explicit GameObject(std::string Aname) noexcept : name(std::string(Aname)), cachedComponentType(typeid(Component))
+    {
+
+    }
+    //
+    //explicit GameObject(const std::string& Aname) noexcept : name(std::string(Aname.c_str())), cachedComponentType(typeid(Component))
+    //{
+
+    //}
+
+    explicit GameObject() noexcept : name(std::string("GameObject")), cachedComponentType(typeid(Component))
+    {
+
+    }
+
+    std::vector<std::shared_ptr<GameObject>> _children;
 
     template <IsComponent T, typename... Args>
     T& AddComponent(Args&&... args);
