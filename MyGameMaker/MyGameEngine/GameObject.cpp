@@ -15,7 +15,7 @@ GameObject::~GameObject()
     components.clear();
 
     for (auto& child : _children) {
-        child.Destroy();
+        child->Destroy();
     }
 }
 
@@ -28,7 +28,7 @@ void GameObject::Start()
 
     for (auto& child : _children)
     {
-        child.Start();
+        child->Start();
     }
 }
 
@@ -154,7 +154,7 @@ bool GameObject::CompareTag(const std::string& tag) const
 BoundingBox GameObject::boundingBox() const 
 {
     BoundingBox bbox = localBoundingBox();
-    if (!mesh && children().size()) bbox = children().front().boundingBox();
-    for (const auto& child : children()) bbox = bbox + child.boundingBox();
+    if (!mesh && _children.size()) bbox = _children.front()->boundingBox();
+    for (const auto& child : _children) bbox = bbox + child->boundingBox();
     return transform->GetMatrix() * bbox;
 }

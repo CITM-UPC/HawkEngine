@@ -75,8 +75,8 @@ void UIHierarchy::DrawSceneObject(GameObject& obj)
 	
 
 	if (open) {
-		for (auto& child : obj.children()) {
-			DrawSceneObject(const_cast<GameObject &>(child));
+		for (auto& child : obj._children) {
+			DrawSceneObject(const_cast<GameObject &>(*child));
 		}
 		ImGui::TreePop();
 	}
