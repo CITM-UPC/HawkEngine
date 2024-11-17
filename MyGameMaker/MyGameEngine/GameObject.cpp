@@ -4,13 +4,13 @@
 
 GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)) 
 {
-    transform = AddComponent<Transform_Component>();
+    transform = std::make_unique<Transform_Component>( AddComponent<Transform_Component>());
 }
 
 GameObject::~GameObject()
 {
     for (auto& component : components) {
-        component.second.Destroy();
+        component.second->Destroy();
     }
     components.clear();
 
@@ -23,7 +23,7 @@ void GameObject::Start()
 {
     for (auto& component : components)
     {
-        component.second.Start();
+        component.second->Start();
     }
 
     for (auto& child : _children)
@@ -41,7 +41,7 @@ void GameObject::Update(float deltaTime)
 
     for (auto& component : components)
     {
-        component.second.Update(deltaTime);
+        component.second->Update(deltaTime);
     }
     
     for (auto& child : _children)
@@ -58,7 +58,7 @@ void GameObject::Destroy()
     
     for (auto& component : components)
 	{
-		component.second.Destroy();
+		component.second->Destroy();
 	}
 
     for (auto& child : _children)
@@ -100,9 +100,14 @@ void GameObject::DrawPushPopMatrix() const
     glPushMatrix();
     glMultMatrixd(transform->GetData());
 
-    if (auto meshRenderer = GetComponent<MeshRenderer>())
+    if (HasComponent<MeshRenderer>())
     {
-        meshRenderer->Render();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        //          second = dictionary value
+       /* meshRenderer->second->Render();*/
+
+
+        /**meshRenderer->Render();*/
     }
 
     glPopMatrix();

@@ -118,7 +118,7 @@ bool Camera::Update(double dt) {
 	if (Application->input->GetMouseZ() > 0) transform().translate(glm::vec3(0, 0, 0.5));
 	if (Application->input->GetMouseZ() < 0) transform().translate(glm::vec3(0, 0, -0.5));
 
-	if (Application->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN && Application->input->GetSelectedGameObject() != NULL) transform().LookAt(Application->input->GetSelectedGameObject()->GetTransform()->GetPosition());
+	if (Application->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN && Application->input->GetSelectedGameObject() != NULL) transform().LookAt(Application->input->GetSelectedGameObject()->GetTransform().GetPosition());
 
 
 
@@ -134,7 +134,7 @@ bool Camera::Update(double dt) {
 		if (angleVertical < -glm::half_pi<double>()) angleVertical = -glm::half_pi<double>();
 		if (angleVertical > glm::half_pi<double>()) angleVertical = glm::half_pi<double>();
 
-		vec3 targetPosition = Application->input->GetSelectedGameObject()->GetTransform()->GetPosition();
+		vec3 targetPosition = Application->input->GetSelectedGameObject()->GetTransform().GetPosition();
 
 		transform().pos().x = targetPosition.x + orbitRadius * cos(angleVertical) * cos(angleHorizontal);
 		transform().pos().y = targetPosition.y + orbitRadius * sin(angleVertical);

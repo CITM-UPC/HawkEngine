@@ -8,6 +8,10 @@ class Transform_Component : public Component
 {
 public:
     Transform_Component(std::weak_ptr<GameObject> owner);
+
+
+    Transform_Component() { ; }
+
     ~Transform_Component() override = default;
 
     void Start() override {}

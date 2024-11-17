@@ -81,7 +81,7 @@ bool  Root::Awake() {
 
     return true;
 
-    MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
+    MarcoVicePresidente->GetTransform().GetPosition() = vec3(0, 0, 0);
     auto mesh = make_shared<Mesh>();
     mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
@@ -119,7 +119,7 @@ shared_ptr<GameObject> Root::CreateMeshObject(string name, shared_ptr<Mesh> mesh
     auto meshRenderer = object->GetComponent<MeshRenderer>();
 
     // Load Mesh
-    meshRenderer->SetMesh( mesh);
+    meshRenderer.SetMesh( mesh);
 
     return nullptr;
 }
@@ -210,7 +210,7 @@ void Root::AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std
     auto material = std::make_shared<Material>();
     image->LoadTexture(texturePath);
     material->setImage(image);
-    meshRenderer->SetMesh(mesh);
-    meshRenderer->SetMaterial(material);
-    meshRenderer->SetImage(image);
+    meshRenderer.SetMesh(mesh);
+    meshRenderer.SetMaterial(material);
+    meshRenderer.SetImage(image);
 }

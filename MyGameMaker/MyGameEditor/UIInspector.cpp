@@ -55,16 +55,17 @@ bool UIInspector::Draw()
 			ImGui::SameLine(); ImGui::Text("GameObject:");
 			ImGui::SameLine(); ImGui::Text(selectedGameObject->GetName().c_str());
 
-			std::shared_ptr<Transform_Component> transform = selectedGameObject->GetTransform();
+			if(selectedGameObject->HasComponent<Transform_Component>()){
 
-			if (transform)
-			{
+			   auto transform = selectedGameObject->GetTransform();
+
+		
 				ImGui::Text("Transform");
 				ImGui::Separator();
 
-				glm::dvec3 currentPosition = transform->GetPosition();
-				glm::dvec3 currentRotation = glm::radians(transform->GetEulerAngles());
-				glm::dvec3 currentScale = transform->GetScale();
+				glm::dvec3 currentPosition = transform.GetPosition();
+				glm::dvec3 currentRotation = glm::radians(transform.GetEulerAngles());
+				glm::dvec3 currentScale = transform.GetScale();
 
 				float pos[3] = { static_cast<float>(currentPosition.x), static_cast<float>(currentPosition.y), static_cast<float>(currentPosition.z) };
 				// Ojo que hay que castear a grados creo
@@ -75,7 +76,7 @@ bool UIInspector::Draw()
 				{
 					glm::dvec3 newPosition = { pos[0], pos[1], pos[2] };
 					glm::dvec3 deltaPos = newPosition - currentPosition;
-					transform->Translate(deltaPos);
+					transform.Translate(deltaPos);
 				}
 
 				if (ImGui::DragFloat3("Rotation", rot, 0.1f))
@@ -87,9 +88,9 @@ bool UIInspector::Draw()
 					//float newY = deltaRot.y * DEGTORAD;
 					//float newZ = deltaRot.z * DEGTORAD;
 
-					transform->Rotate(deltaRot.x, glm::dvec3(1, 0, 0));
-					transform->Rotate(deltaRot.y, glm::dvec3(0, 1, 0));
-					transform->Rotate(deltaRot.z, glm::dvec3(0, 0, 1));
+					transform.Rotate(deltaRot.x, glm::dvec3(1, 0, 0));
+					transform.Rotate(deltaRot.y, glm::dvec3(0, 1, 0));
+					transform.Rotate(deltaRot.z, glm::dvec3(0, 0, 1));
 				}
 
 				if (ImGui::DragFloat3("Scale", sca, 0.1f, 0.01f, 100.0f))
@@ -102,7 +103,7 @@ bool UIInspector::Draw()
 
 			ImGui::Separator();
 
-			std::shared_ptr<Mesh> mesh = selectedGameObject->GetComponent<MeshRenderer>()->GetMesh();
+			std::shared_ptr<Mesh> mesh = selectedGameObject->GetComponent<MeshRenderer>().GetMesh();
 
 			if (mesh)
 			{
@@ -123,7 +124,7 @@ bool UIInspector::Draw()
 
 			ImGui::Separator();
 
-			std::shared_ptr<Image> image = selectedGameObject->GetComponent<MeshRenderer>()->GetImage();
+			std::shared_ptr<Image> image = selectedGameObject->GetComponent<MeshRenderer>().GetImage();
 			if (image)
 			{
 				ImGui::Text("Image");

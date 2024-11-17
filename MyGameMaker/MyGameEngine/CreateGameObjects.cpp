@@ -72,7 +72,7 @@ std::shared_ptr<GameObject> GameObject::CreateCube(const std::string& name)
 	mesh->LoadNormals(normals, 6);
 	mesh->LoadColors(colors, 6);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 
 	//scene.emplaceChild(go);
@@ -151,7 +151,7 @@ std::shared_ptr<GameObject> GameObject::CreateSphere(const std::string& name)
 	mesh->LoadNormals(normals, 6);
 	mesh->LoadColors(colors, 6);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 	//scene.emplaceChild(go);
 	return go;
@@ -202,7 +202,7 @@ std::shared_ptr<GameObject> GameObject::CreatePlane(const std::string& name)
 	mesh->LoadNormals(normals, 4);
 	mesh->LoadColors(colors, 4);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 	//scene.emplaceChild(go);
 	return go;
@@ -253,7 +253,7 @@ std::shared_ptr<GameObject> GameObject::CreateQuad(const std::string& name)
 	mesh->LoadNormals(normals, 4);
 	mesh->LoadColors(colors, 4);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 	//scene.emplaceChild(go);
 	return go;
@@ -332,7 +332,7 @@ std::shared_ptr<GameObject> GameObject::CreateCylinder(const std::string& name)
 	mesh->LoadNormals(normals, 6);
 	mesh->LoadColors(colors, 6);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 	//scene.emplaceChild(go);
 	return go;
@@ -411,7 +411,7 @@ std::shared_ptr<GameObject> GameObject::CreateCapsule(const std::string& name)
 	mesh->LoadNormals(normals, 6);
 	mesh->LoadColors(colors, 6);
 
-	meshRenderer->SetMesh(mesh);
+	meshRenderer.SetMesh(mesh);
 
 	//scene.emplaceChild(go);
 	return go;

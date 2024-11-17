@@ -9,6 +9,11 @@ class Image;
 class MeshRenderer : public Component {
 public:
     explicit MeshRenderer(std::weak_ptr<GameObject> owner);
+
+    MeshRenderer() { ; }
+
+    //MeshRenderer() = default;
+
     ~MeshRenderer() override = default;
 
     void Start() override;

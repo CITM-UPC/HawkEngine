@@ -259,9 +259,9 @@ static void display_func() {
 		
 		if (object->HasComponent<MeshRenderer>()) {
 
-			BoundingBox bbox = object->GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
+			BoundingBox bbox = object->GetComponent<MeshRenderer>().GetMesh()->boundingBox();
 
-			bbox = object->GetTransform()->GetMatrix() * bbox;
+			bbox = object->GetTransform().GetMatrix() * bbox;
 
 			if (CheckRayAABBCollision(rayStartPos, rayDir, bbox))
 			{

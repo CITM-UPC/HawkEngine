@@ -14,7 +14,14 @@ class Component
 {
 public:
 	explicit Component(std::weak_ptr<GameObject> owner) : owner(owner) {}
-	virtual ~Component() = default;
+
+	Component() { ; }
+
+	virtual ~Component()  {
+
+		int a = 6;
+	
+	}
 
 	virtual void Start() = 0;
 	virtual void Update(float deltaTime) = 0;

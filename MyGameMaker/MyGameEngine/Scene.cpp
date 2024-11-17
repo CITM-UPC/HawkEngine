@@ -69,13 +69,16 @@ std::shared_ptr<GameObject> Scene::FindGameObjectbyName(const std::string& name)
 
 std::shared_ptr<GameObject> Scene::FindGameObjectbyTag(const std::string& tag)
 {
-	for (auto child : _children)
+	for (auto& child : _children)
 	{
 		if (child.CompareTag(tag))
 		{
 			return std::make_shared<GameObject>(child);
 		}
+
+
 	}
+
 	return nullptr;
 }
 

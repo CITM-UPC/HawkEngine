@@ -204,7 +204,7 @@ bool Input::processSDLEvents()
                     auto material = std::make_shared<Material>();
                     image->LoadTexture(fileDir);
                     material->setImage(image);
-                    meshRenderer->SetMaterial(material);
+                    meshRenderer.SetMaterial(material);
 				}
             }
             SDL_free(event.drop.file);

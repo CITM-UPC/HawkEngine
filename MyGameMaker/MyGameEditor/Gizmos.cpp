@@ -38,7 +38,7 @@ void Gizmos::DrawGizmos() {
     if (Application->input->GetSelectedGameObject() != nullptr) 
     {
 		IntersectAxis(rayStartPos, rayDir, selectedAxis);
-        glm::vec3 position = Application->input->GetSelectedGameObject()->GetTransform()->GetPosition();
+        glm::vec3 position = Application->input->GetSelectedGameObject()->GetTransform().GetPosition();
 
         // Deshabilitar la prueba de profundidad para dibujar los gizmos sobre la malla
         glDisable(GL_DEPTH_TEST);
@@ -163,7 +163,7 @@ bool RaysIntersect(const glm::vec3& origin1, const glm::vec3& direction1,
 }
 
 bool Gizmos::IntersectAxis(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& outAxis) {
-    glm::vec3 position = Application->input->GetSelectedGameObject()->GetTransform()->GetPosition();
+    glm::vec3 position = Application->input->GetSelectedGameObject()->GetTransform().GetPosition();
 
     // Eje X
   
@@ -191,7 +191,7 @@ bool Gizmos::IntersectAxis(const glm::vec3& rayOrigin, const glm::vec3& rayDirec
 void Gizmos::MoveObjectAlongAxis(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& axis) {
     // Implementar la lógica para mover el objeto a lo largo del eje seleccionado
     // Puedes proyectar el rayo en el eje y mover el objeto en consecuencia
-    glm::vec3 position = Application->input->GetDraggedGameObject()->GetTransform()->GetPosition();
+    glm::vec3 position = Application->input->GetDraggedGameObject()->GetTransform().GetPosition();
     glm::vec3 projectedPoint = rayOrigin + glm::dot((position - rayOrigin), axis) * axis;
-    Application->input->GetSelectedGameObject()->GetTransform()->Translate(projectedPoint);
+    Application->input->GetSelectedGameObject()->GetTransform().Translate(projectedPoint);
 }
