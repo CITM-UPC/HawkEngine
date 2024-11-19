@@ -24,9 +24,9 @@ public:
 		int debug = 0;
 	};
 
-	virtual void Start() ;
-	virtual void Update(float deltaTime) ;
-	virtual void Destroy() ;
+	virtual void Start() { ; }
+	virtual void Update(float deltaTime) { ; }
+	virtual void Destroy() { ; }
 
 	GameObject& GetOwner() const { return *owner; }
 	std::string GetName() const { return name; }

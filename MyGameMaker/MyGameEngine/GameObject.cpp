@@ -7,6 +7,11 @@
 GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)) 
 {
     components = std::map<std::type_index, ComponentVariant>();
+
+    transform = &AddComponent<Transform_Component>();
+
+    int i = 9;
+
 }
 
 GameObject::~GameObject()

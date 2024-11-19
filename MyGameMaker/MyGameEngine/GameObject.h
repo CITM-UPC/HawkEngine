@@ -138,9 +138,9 @@ T& GameObject::AddComponent(Args&&... args) {
     components[typeid(T)] = std::move(newComponent);*/
 
     //ComponentVariant newComponent = T(this);
-    ComponentVariant newComponent(std::in_place_type<T>, this);
+    
      
-    components[typeid(T)] = newComponent;
+    components[typeid(T)] = ComponentVariant(std::in_place_type<T>, this);
 
     return std::get<T>(components.at(typeid(T)));
 
@@ -160,7 +160,7 @@ T& GameObject::GetComponent()  {
 
         if (HasComponent<T>()){
 
-            return dynamic_cast<T&>(cachedComponent);
+            return dynamic_cast<T&>(*cachedComponent);
         }
     }
     // remember nothing can have a ptr to a unique_ptr
