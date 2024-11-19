@@ -6,52 +6,61 @@
 
 GameObject::GameObject(const std::string& name) : name(name), cachedComponentType(typeid(Component)) 
 {
-    transform = AddComponent<Transform_Component>();
+    components = std::map<std::type_index, ComponentVariant>();
 }
 
 GameObject::~GameObject()
 {
-    for (auto& component : components) {
-        component.second->Destroy();
-    }
-    components.clear();
+    //for (auto& component : components) {
+    //    component.second->Destroy();
+    //}
+    //components.clear();
 
-    for (auto& child : children()) {
-        child.Destroy();
-    }
+    //for (auto& child : children()) {
+    //    child.Destroy();
+    //}
 }
+
+// comment all the use of components to check if the error persists
 
 void GameObject::Start()
 {
-    for (auto& component : components)
-    {
-        component.second->Start();
-    }
 
-    for (auto& child : children())
-    {
-        child.Start();
-    }
+    transform = &AddComponent<Transform_Component>();
+
+    //for (auto& component : components)
+    //{
+    //    component.second->Start();
+    //}
+
+    //for (auto& child : children())
+    //{
+    //    child.Start();
+    //}
 }
 
 void GameObject::Update(float deltaTime)
 {
-    if (!active)
-    {
-        return;
-    }
+   if (!active)
+   {
+       return;
+   }
 
-    for (auto& component : components)
-    {
-        component.second->Update(deltaTime);
-    }
-    
-    for (auto& child : children())
-	{
-		child.Update(deltaTime);
-	}
+   for (auto& component : components)
+   {
+       //return std::get<component.first>(components.at(typeid(component.first)));
 
-    Draw();
+       std::visit([&](auto&& comp) {
+           comp.Update(deltaTime);  // Revise this later
+           }, component.second);
+   }
+   
+   for (auto& child : children())
+   {
+	    child.Update(deltaTime);
+   }
+
+   Draw();
 }
 
 void GameObject::Destroy()
@@ -75,7 +84,7 @@ void GameObject::Destroy()
     //}
 }
 
-void GameObject::Draw() const
+void GameObject::Draw() 
 {
     //std::cout << "Draw GameObject: " << name << std::endl;
     
@@ -103,14 +112,16 @@ void GameObject::DrawInstancedMatrix() const
 	//De momento nada ya lo hare en un futuro :)
 }
 
-void GameObject::DrawPushPopMatrix() const
+void GameObject::DrawPushPopMatrix() 
 {
     glPushMatrix();
     glMultMatrixd(transform->GetData());
 
-    if (auto meshRenderer = GetComponent<MeshRenderer>())
-    {
-        meshRenderer->Render();
+    if (HasComponent<MeshRenderer>()) {
+        GetComponent<MeshRenderer>();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        
+        meshRenderer.Render();
     }
 
     glPopMatrix();

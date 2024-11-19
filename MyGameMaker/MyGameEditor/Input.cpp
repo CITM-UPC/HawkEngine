@@ -183,7 +183,7 @@ bool Input::processSDLEvents()
 
                 //Application->root->CreateMeshObject(fileNameExt,  mesh);
                 auto go = Application->root->CreateGameObject(fileNameExt, false);
-                Application->root->AddMeshRenderer(*go, mesh, "Assets/default.png");
+                Application->root->AddMeshRenderer(go, mesh, "Assets/default.png");
 
                 //Application->ElMesh.LoadMesh(CopyFBXFileToProject( fileDir).c_str());
 
@@ -204,7 +204,7 @@ bool Input::processSDLEvents()
                     auto material = std::make_shared<Material>();
                     image->LoadTexture(fileDir);
                     material->setImage(image);
-                    meshRenderer->SetMaterial(material);
+                    meshRenderer.SetMaterial(material);
 				}
             }
             SDL_free(event.drop.file);

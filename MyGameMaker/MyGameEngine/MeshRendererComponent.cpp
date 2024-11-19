@@ -8,7 +8,9 @@
 #include "Image.h"
 #include <iostream>
 
-MeshRenderer::MeshRenderer(std::weak_ptr<GameObject> owner) : Component(owner) { name = "MeshRenderer"; }
+MeshRenderer::MeshRenderer(GameObject* owner) : Component(owner) { name = "MeshRenderer"; }
+
+MeshRenderer::MeshRenderer() : Component(nullptr) { name = "MeshRenderer"; }
 
 void MeshRenderer::Start()
 {

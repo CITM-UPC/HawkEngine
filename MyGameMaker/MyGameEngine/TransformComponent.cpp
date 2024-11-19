@@ -4,7 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
-Transform_Component::Transform_Component(std::weak_ptr<GameObject> owner) : Component(owner) { name = "Transform_Component"; }
+Transform_Component::Transform_Component(GameObject* owner) : Component(owner) { name = "Transform_Component"; }
+
+Transform_Component::Transform_Component() : Component(nullptr) { name = "Transform_Component"; }
+
 
 void Transform_Component::Translate(const glm::dvec3& translation)
 {

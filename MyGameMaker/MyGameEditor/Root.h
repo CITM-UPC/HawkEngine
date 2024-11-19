@@ -43,7 +43,7 @@ public:
     void CreatePlaneObject(std::string name);
 	void CreateEmptyObject(std::string name);
 
-    std::shared_ptr<GameObject> CreateGameObject(std::string name, bool as_child = false);
+    GameObject& CreateGameObject(std::string name, bool as_child);
 
     void AddMeshRenderer(GameObject& go, std::shared_ptr<   Mesh> mesh, const std::string& texturePath = "default.png");
     void RemoveGameObject(std::string name);
