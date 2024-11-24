@@ -107,8 +107,6 @@ void UIHierarchy::DrawSceneObject(GameObject& obj)
 		ImGui::EndDragDropTarget();
 	}
 
-
-
 	if (open) {
 		for (auto& child : obj.children()) {
 			DrawSceneObject(child);
