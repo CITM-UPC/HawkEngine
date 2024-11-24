@@ -16,8 +16,7 @@ struct PointLight {
     float constant;
     float linear;
     float quadratic;
-};
-
+};dasfasfaf
 struct DirLight {
     vec3 direction;
     vec3 ambient;
@@ -35,7 +34,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
-{
+
     // Properties
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
