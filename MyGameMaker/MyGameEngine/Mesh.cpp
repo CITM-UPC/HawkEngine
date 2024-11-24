@@ -277,6 +277,8 @@ void Mesh::LoadMesh(const char* file_path)
 
 		if (!all_normals.empty()) {
 			LoadNormals(all_normals.data(), all_normals.size());
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+			glEnableVertexAttribArray(2);
 		}
 
 		if (!all_colors.empty()) {

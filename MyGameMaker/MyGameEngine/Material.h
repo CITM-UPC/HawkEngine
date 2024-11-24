@@ -6,6 +6,9 @@
 
 class Material
 {
+private:
+	std::shared_ptr<Image> imagePtr;
+
 public:
 	enum WrapModes { Repeat, MirroredRepeat, Clamp };
 	WrapModes wrapMode = Repeat;
@@ -16,10 +19,6 @@ public:
 	Shaders shader;
 
 	bool useShader = false;
-private:
-	std::shared_ptr<Image> imagePtr;
-
-public:
 
 	void LoadTexture(const std::string& filename);
 	unsigned int id() const { return imagePtr ? imagePtr->id() : 0; }
