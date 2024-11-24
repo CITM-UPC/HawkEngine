@@ -19,7 +19,7 @@ GameObject::~GameObject()
     components.clear();
 
     for (auto& child : children()) {
-        child.Destroy();
+        child->Destroy();
     }
 }
 
@@ -56,10 +56,45 @@ GameObject& GameObject::operator=(const GameObject& other) {
 
         for (auto& child : children())
 		{
-			child.Destroy();
+			child->Destroy();
 		}
     }
     return *this;
+}
+
+GameObject::GameObject(GameObject&& other) noexcept :
+	name(std::move(other.name)),
+	gid(nextGid++),
+	active(other.active),
+	transform(std::move(other.transform)),
+	mesh(std::move(other.mesh)),
+	tag(std::move(other.tag)),
+	components(std::move(other.components)),
+	cachedComponentType(typeid(Component))
+{
+	other.transform = nullptr;
+	other.mesh = nullptr;
+	other.components.clear();
+}
+
+GameObject& GameObject::operator=(GameObject&& other) noexcept
+{
+	if (this != &other)
+	{
+		name = std::move(other.name);
+		gid = nextGid++;
+		active = other.active;
+		transform = std::move(other.transform);
+		mesh = std::move(other.mesh);
+		tag = std::move(other.tag);
+		components = std::move(other.components);
+		cachedComponentType = typeid(Component);
+
+		other.transform = nullptr;
+		other.mesh = nullptr;
+		other.components.clear();
+	}
+	return *this;
 }
 
 void GameObject::Start()
@@ -71,7 +106,7 @@ void GameObject::Start()
 
     for (auto& child : children())
     {
-        child.Start();
+        child->Start();
     }
 }
 
@@ -91,7 +126,7 @@ void GameObject::Update(float deltaTime)
     
     for (auto& child : children())
 	{
-		child.Update(deltaTime);
+		child->Update(deltaTime);
 	}
 
     Draw();
@@ -108,8 +143,11 @@ void GameObject::Destroy()
 
     for (auto& child : children())
     {
-        child.Destroy();
+        child->Destroy();
     }
+
+    components.clear();
+    children_.clear();
 }
 
 void GameObject::Draw() const
@@ -153,7 +191,7 @@ void GameObject::DrawPushPopMatrix() const
 
     for (const auto& child : children())
 	{
-		child.Draw();
+		child->Draw();
 	}
 
     glPopMatrix();
@@ -200,7 +238,24 @@ bool GameObject::CompareTag(const std::string& tag) const
 BoundingBox GameObject::boundingBox() const 
 {
     BoundingBox bbox = localBoundingBox();
-    if (!mesh && children().size()) bbox = children().front().boundingBox();
-    for (const auto& child : children()) bbox = bbox + child.boundingBox();
+    if (!mesh && children().size()) bbox = children().front()->boundingBox();
+    for (const auto& child : children()) bbox = bbox + child->boundingBox();
     return transform->GetMatrix() * bbox;
+}
+
+void GameObject::AddChild(const std::shared_ptr<GameObject>& child) {
+    // Evitar duplicados: agregar el hijo solo si no está presente
+    auto it = std::find(children_.begin(), children_.end(), child);
+    if (it == children_.end()) {
+        children_.push_back(child);
+    }
+    else {
+        LOG(LogType::LOG_ERROR, "El GameObject ya es hijo de este objeto.");
+    }
+}
+
+
+void GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)
+{
+	children_.erase(std::remove(children_.begin(), children_.end(), child), children_.end());
 }

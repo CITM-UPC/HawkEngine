@@ -30,10 +30,16 @@ bool  Root::Awake()
     mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
 
+    auto MarcoPresidente = CreateGameObject("BakerHouse2", MarcoVicePresidente);
+    MarcoPresidente->GetTransform()->GetPosition() = vec3(5, 0, 0);
+    auto mesh2 = make_shared<Mesh>();
+    mesh2->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+    AddMeshRenderer(*MarcoPresidente, mesh2, "Assets/Baker_house.png");
+
     return true;
 }
 
-bool Root::Start() 
+bool Root::Start()
 { 
     for (shared_ptr<GameObject> object : currentScene->_children)
     {
@@ -94,7 +100,7 @@ void Root::RemoveGameObject(GameObject* gameObject) {
     }
 }
 
-std::shared_ptr<GameObject> Root::CreateGameObject(const std::string& name) 
+std::shared_ptr<GameObject> Root::CreateGameObject(const std::string& name, std::shared_ptr<GameObject> parent) 
 {
     std::string uniqueName = name;
     int counter = 1;
@@ -105,7 +111,14 @@ std::shared_ptr<GameObject> Root::CreateGameObject(const std::string& name)
     }
 
     auto gameObject = std::make_shared<GameObject>(uniqueName);
-    currentScene->_children.push_back(gameObject);
+    
+    if (parent) {
+		parent->AddChild(gameObject);
+	}
+	else {
+		currentScene->AddGameObject(gameObject);
+	}
+
     return gameObject;
 }
 
@@ -184,25 +197,22 @@ std::shared_ptr<Scene> Root::GetActiveScene() const
 	return currentScene;
 }
 
-
 bool Root::ParentGameObject(GameObject& child, GameObject& father) {
-
     child.isSelected = false;
     Application->input->ClearSelection();
 
-    for (size_t i = 0; i < currentScene->_children.size(); ++i) {
+    auto it = std::find_if(currentScene->_children.begin(), currentScene->_children.end(),
+        [&child](const std::shared_ptr<GameObject>& go) { return *go == child; });
 
-        if (*currentScene->_children[i] == child) {
+    if (it != currentScene->_children.end()) {
+        std::shared_ptr<GameObject> _child = *it;
 
-            std::shared_ptr<GameObject> _child = currentScene->_children[i];
+        currentScene->_children.erase(it);
 
-            currentScene->_children.erase(currentScene->_children.begin() + i);
-            father.emplaceChild(*_child);
-            return true;
-
-        }
-
+        father.AddChild(std::move(_child));
+        return true;
     }
 
+    LOG(LogType::LOG_ERROR, "El GameObject no se encuentra en la escena.");
     return false;
 }

@@ -15,7 +15,7 @@ enum class DrawMode
     PushPopMatrix
 };
 
-class GameObject : public std::enable_shared_from_this<GameObject>, public TreeExt<GameObject>
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
     GameObject(const std::string& name = "GameObject");
@@ -23,6 +23,9 @@ public:
 
     GameObject(const GameObject& other);
     GameObject& operator=(const GameObject& other);
+
+    GameObject(GameObject&& other) noexcept;
+    GameObject& operator=(GameObject&& other) noexcept;
 
     template <IsComponent T, typename... Args>
     std::shared_ptr<T> AddComponent(Args&&... args);
@@ -65,7 +68,7 @@ public:
     unsigned int GetId() const { return gid; }
 
     bool operator==(const GameObject& other) const {
-        return gid == other.gid;
+        return this->gid == other.gid;
     }
 
     bool operator!=(const GameObject& other) const {
@@ -75,7 +78,17 @@ public:
     bool isSelected = false;
     bool isStatic = false;
 
+    void AddChild(const std::shared_ptr<GameObject>& child);
+    void RemoveChild(const std::shared_ptr<GameObject>& child);
+
+    std::vector<std::shared_ptr<GameObject>> children() const {
+		return children_;
+	}
+
 private:
+
+    std::vector<std::shared_ptr<GameObject>> children_;
+
     friend class SceneSerializer;
 
     void DrawAccumultedMatrix() const;

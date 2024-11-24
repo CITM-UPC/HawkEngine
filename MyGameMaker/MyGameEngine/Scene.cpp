@@ -21,10 +21,17 @@ void Scene::Update(float deltaTime)
 
 void Scene::Destroy()
 {
+	std::vector<std::shared_ptr<GameObject>> toRemove;
+
 	for (auto& child : _children) {
-        RemoveGameObject(child);
-    }
-    _children.clear();
+		toRemove.push_back(child);
+	}
+
+	for (auto& child : toRemove) {
+		RemoveGameObject(child);
+	}
+
+	_children.clear();
 }
 
 void Scene::OnEnable()

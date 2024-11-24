@@ -40,20 +40,32 @@ std::shared_ptr<Component> Transform_Component::Clone()
     return clone;
 }
 
+Transform_Component::Transform_Component(Transform_Component&& other) noexcept : Component(std::move(other))
+{
+	matrix = std::move(other.matrix);
+	position = std::move(other.position);
+	left = std::move(other.left);
+	up = std::move(other.up);
+	forward = std::move(other.forward);
+}
+
+Transform_Component& Transform_Component::operator=(Transform_Component&& other) noexcept
+{
+	if (this != &other)
+	{
+		Component::operator=(std::move(other));
+		matrix = std::move(other.matrix);
+		position = std::move(other.position);
+		left = std::move(other.left);
+		up = std::move(other.up);
+		forward = std::move(other.forward);
+	}
+	return *this;
+}
+
 void Transform_Component::Translate(const glm::dvec3& translation)
 {
 	matrix = glm::translate(matrix, translation);
-
-
-    //------Recursively apply translation to all children---------//
-    if (owner ) {
-        
-        for (GameObject& child : owner->children()) {
-            int size = child.children().size();
-            child.GetTransform()->Translate(translation);
-
-        }
-    }
 }
 void Transform_Component::SetPosition(const glm::dvec3& position)
 {
