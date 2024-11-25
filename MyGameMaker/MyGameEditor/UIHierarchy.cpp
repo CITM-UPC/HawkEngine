@@ -101,7 +101,8 @@ void UIHierarchy::DrawSceneObject(GameObject& obj)
 			if (draggedObj && draggedObj != &obj) {
 
 				std::cout << "dragged " << draggedObj->GetName() << "into " << obj.GetName();
-				obj.emplaceChild(*draggedObj);
+				//obj.emplaceChild(*draggedObj);
+				Application->root->ParentGameObject(*draggedObj, obj);
 			}
 		}
 		ImGui::EndDragDropTarget();

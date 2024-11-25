@@ -31,13 +31,14 @@ void MeshRenderer::Destroy()
     mesh.reset();
 }
 
-std::shared_ptr<Component> MeshRenderer::Clone()
+std::shared_ptr<Component> MeshRenderer::Clone(GameObject* owner)
 {
 	auto meshRenderer = std::make_shared<MeshRenderer>(*this);
 	meshRenderer->mesh = mesh;
 	meshRenderer->material = material;
 	meshRenderer->image = image;
 	meshRenderer->color = color;
+    meshRenderer->owner = owner;
 	return meshRenderer;
 }
 

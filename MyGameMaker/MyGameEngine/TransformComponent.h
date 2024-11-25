@@ -22,7 +22,7 @@ public:
     void Update(float deltaTime) override {}
     void Destroy() override {}
 
-    std::shared_ptr<Component> Clone() override;
+    std::shared_ptr<Component> Clone(GameObject* owner) override;
 
     const auto& GetMatrix() const { return matrix; }
     const auto& GetLeft() const { return left; }

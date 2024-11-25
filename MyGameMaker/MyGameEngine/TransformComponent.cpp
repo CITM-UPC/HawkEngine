@@ -29,7 +29,7 @@ Transform_Component& Transform_Component::operator=(const Transform_Component& o
     return *this;
 }
 
-std::shared_ptr<Component> Transform_Component::Clone()
+std::shared_ptr<Component> Transform_Component::Clone(GameObject* owner)
 {
     auto clone = std::make_shared<Transform_Component>(*this);
     clone->matrix = this->matrix;
@@ -37,6 +37,7 @@ std::shared_ptr<Component> Transform_Component::Clone()
     clone->up = this->up;
     clone->forward = this->forward;
     clone->position = this->position;
+    clone->owner = owner;
     return clone;
 }
 
@@ -46,9 +47,9 @@ void Transform_Component::Translate(const glm::dvec3& translation)
 
 
     //------Recursively apply translation to all children---------//
-    if (owner ) {
+    if (owner2 ) { 
         
-        for (GameObject& child : owner->children()) {
+        for (GameObject& child : owner2->children()) {
             int size = child.children().size();
             child.GetTransform()->Translate(translation);
 

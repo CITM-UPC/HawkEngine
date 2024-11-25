@@ -33,7 +33,11 @@ GameObject::GameObject(const GameObject& other) :
     cachedComponentType(typeid(Component))
 {
     for (const auto& component : other.components) {
-        components[component.first] = component.second->Clone();
+        /*components[component.first] = component.second->Clone(this);
+        components[component.first]->owner = this;*/
+
+        components[component.first] = component.second;
+        components[component.first]->owner = this;
     }
 }
 
@@ -51,7 +55,7 @@ GameObject& GameObject::operator=(const GameObject& other) {
 
         for (const auto& component : other.components)
         {
-            components[component.first] = component.second->Clone();
+            components[component.first] = component.second->Clone(this);
         }
 
         for (auto& child : children())
@@ -84,8 +88,12 @@ void GameObject::Update(float deltaTime)
     LOG(LogType::LOG_ASSIMP, "%s has %d children", GetName().c_str(), children().size());
     std::cout << std::endl << GetName() << "has " << children().size() << " children";
 
+    GetTransform()->owner2 = this;
+
     for (auto& component : components)
     {
+        //component.second->owner = this;
+        //component.second->owner2 = this;
         component.second->Update(deltaTime);
     }
     
