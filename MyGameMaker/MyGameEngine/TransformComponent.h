@@ -120,7 +120,6 @@ protected:
         YAML::convert<glm::dvec3>::decode(node["rotation"], new_rotation);
         SetRotation(new_rotation);
 
-
         return true;
     }
 

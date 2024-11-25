@@ -32,6 +32,8 @@ public:
 
 	void SetName(const std::string& name) { this->name = name; }
 
+	void SetOwner(std::weak_ptr<GameObject> owner) { this->owner = owner; }
+
 protected:
 
 	friend class SceneSerializer;

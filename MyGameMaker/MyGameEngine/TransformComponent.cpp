@@ -13,6 +13,7 @@ Transform_Component::Transform_Component(const Transform_Component& other) : Com
     left = other.left;
     up = other.up;
     forward = other.forward;
+    owner = other.owner;
 }
 
 Transform_Component& Transform_Component::operator=(const Transform_Component& other)
@@ -25,6 +26,7 @@ Transform_Component& Transform_Component::operator=(const Transform_Component& o
         left = other.left;
         up = other.up;
         forward = other.forward;
+        owner = other.owner;
     }
     return *this;
 }
@@ -37,7 +39,13 @@ std::shared_ptr<Component> Transform_Component::Clone()
     clone->up = this->up;
     clone->forward = this->forward;
     clone->position = this->position;
+    clone->owner = this->owner;
     return clone;
+}
+
+void SetOwner(std::weak_ptr<GameObject> owner)
+{
+	owner = owner;
 }
 
 void Transform_Component::Translate(const glm::dvec3& translation)

@@ -34,6 +34,18 @@ GameObject::GameObject(const GameObject& other) :
     for (const auto& component : other.components) {
         components[component.first] = component.second->Clone();
     }
+
+    for (const auto& child : other.children) {
+		children.push_back(std::make_shared<GameObject>(*child));
+	}
+
+    for (const auto& component : components) {
+		component.second->SetOwner(shared_from_this());
+	}
+
+	for (const auto& child : children) {
+		child->SetParent(shared_from_this());
+	}
 }
 
 GameObject& GameObject::operator=(const GameObject& other) {
@@ -53,9 +65,16 @@ GameObject& GameObject::operator=(const GameObject& other) {
             components[component.first] = component.second->Clone();
         }
 
-        for (auto& child : children)
+        for (const auto& component : components)
 		{
-			child->Destroy();
+			component.second->SetOwner(shared_from_this());
+		}
+
+        cachedComponentType = typeid(Component);
+
+        for (const auto& child : other.children)
+		{
+			children.push_back(std::make_shared<GameObject>(*child));
 		}
     }
     return *this;
@@ -203,25 +222,23 @@ BoundingBox GameObject::boundingBox() const
 }
 
 void GameObject::SetParent(std::shared_ptr<GameObject> parent) {
-    // Si ya tiene un padre, se elimina como hijo del padre anterior
     if (auto currentParent = this->parent.lock()) {
         currentParent->RemoveChild(shared_from_this());
     }
 
-    // Asigna el nuevo padre
     this->parent = parent;
 
-    // Si el nuevo padre es válido, se añade como hijo
     if (parent) {
         parent->AddChild(shared_from_this());
     }
 }
 
 void GameObject::AddChild(std::shared_ptr<GameObject> child) {
-    // Se asegura que el hijo no sea nulo y no sea el propio objeto
     if (child && child != shared_from_this()) {
-        // Se añade el hijo a la lista de hijos
-        children.push_back(child);
+        auto it = std::find(children.begin(), children.end(), child);
+        if (it == children.end()) {
+            children.push_back(child);
+        }
     }
 }
 
