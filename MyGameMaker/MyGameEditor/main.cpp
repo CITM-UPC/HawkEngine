@@ -36,7 +36,6 @@
 #include "MyGameEngine/GameObject.h"
 #include "MyGameEngine/TransformComponent.h"
 #include "MyGameEngine/MeshRendererComponent.h"
-#include "MyGameEngine/Shaders.h"
 #include "App.h"
 
 
@@ -63,12 +62,6 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-GLuint depthMapFBO;
-GLuint depthMap;
-const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-Shaders shadowShader;
-Shaders mainShader;
 
 static const ivec2 WINDOW_SIZE(1280, 720);
 static const auto FPS = 60;
@@ -77,26 +70,6 @@ static const auto FRAME_DT = 1.0s / FPS;
 static Camera* camera = nullptr;
 
 App* Application = NULL;
-
-void initDepthMap() {
-	glGenFramebuffers(1, &depthMapFBO);
-
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 static void init_openGL() {
 	glewInit();
@@ -110,8 +83,6 @@ static void init_openGL() {
 	glScaled(1.0, (double)WINDOW_SIZE.x/WINDOW_SIZE.y, 1.0);
 	
 	glMatrixMode(GL_MODELVIEW);
-
-	initDepthMap();
 }
 
 struct Triangle {
@@ -165,6 +136,67 @@ void configureCamera() {
 }
 #pragma region RayPickingCode(MoveSomewhereElse)
 
+glm::vec3 ConvertMouseToWorldCoords(int mouse_x, int mouse_y, int screen_width, int screen_height, int window_x,int window_y)
+{
+	int adjusted_mouse_x = mouse_x - window_x;
+	int adjusted_mouse_y = mouse_y - window_y;
+
+	if (adjusted_mouse_x < 0 || adjusted_mouse_x > screen_width || adjusted_mouse_y < 0 || adjusted_mouse_y > screen_height) {
+		// if the mouse is outside the window make it so it doesnt detect anything
+	}
+
+	float ndc_x = (2.0f * adjusted_mouse_x) / screen_width - 1.0f;
+	float ndc_y = 1.0f - (2.0f * adjusted_mouse_y) / screen_height;
+
+	glm::vec4 clip_coords = glm::vec4(ndc_x, ndc_y, -1.0f, 1.0f);
+
+	glm::mat4 projection_matrix = camera->projection();
+	glm::vec4 view_coords = glm::inverse(projection_matrix) * clip_coords;
+	view_coords = glm::vec4(view_coords.x, view_coords.y, -1.0f, 0.0f);
+
+	glm::mat4 view_matrix = camera->view();
+	glm::vec4 world_coords = glm::inverse(view_matrix) * view_coords;
+
+	return glm::vec3(world_coords.x + camera->transform().pos().x, world_coords.y + camera->transform().pos().y, world_coords.z + camera->transform().pos().z);
+}
+
+void DrawRay(const glm::vec3& ray_origin, const glm::vec3& ray_direction)
+{
+	//draw the ray
+	glBegin(GL_LINES);
+	glVertex3f(ray_origin.x, ray_origin.y, ray_origin.z);
+	glVertex3f(ray_origin.x + ray_direction.x , ray_origin.y + ray_direction.y , ray_origin.z + ray_direction.z);
+	glEnd();
+}
+
+glm::vec3 GetMousePickDir(int mouse_x, int mouse_y, int screen_width, int screen_height, int window_x, int window_y)
+{
+	int adjusted_mouse_x = mouse_x - window_x;
+	int adjusted_mouse_y = mouse_y - window_y;
+
+	if (adjusted_mouse_x < 0 || adjusted_mouse_x > screen_width || adjusted_mouse_y < 0 || adjusted_mouse_y > screen_height) {
+		 // if the mouse is outside the window make it so it doesnt detect anything
+	}
+
+	glm::vec3 window_coords = glm::vec3(adjusted_mouse_x, screen_height - adjusted_mouse_y, 0.0f);
+
+	glm::mat4 view_matrix = camera->view();
+	glm::mat4 projection_matrix = camera->projection();
+
+	glm::vec4 viewport = glm::vec4(0, 0, screen_width, screen_height);
+
+	glm::vec3 v0 = glm::unProject(window_coords, view_matrix, projection_matrix, viewport);
+	glm::vec3 v1 = glm::unProject(glm::vec3(window_coords.x, window_coords.y, 1.0f), view_matrix, projection_matrix, viewport);
+
+	glm::vec3 world_coords = (v1 - v0);
+
+	return world_coords;
+}
+struct Ray {
+	glm::vec3 origin;
+	glm::vec3 direction;
+};
+
 bool CheckRayAABBCollision(const glm::vec3& rayOrigin, const glm::vec3& rayDir, const BoundingBox& bBox) {
 	float tmin = (bBox.min.x - rayOrigin.x) / rayDir.x;
 	float tmax = (bBox.max.x - rayOrigin.x) / rayDir.x;
@@ -195,6 +227,8 @@ bool CheckRayAABBCollision(const glm::vec3& rayOrigin, const glm::vec3& rayDir, 
 
 	return true;
 }
+
+#pragma endregion
 
 void Draw3DRectangle(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, float width, float height, float depth) {
 	glm::vec3 right = glm::normalize(glm::cross(rayDirection, glm::vec3(0.0f, 1.0f, 0.0f))) * width;
@@ -244,70 +278,24 @@ void Draw3DRectangle(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, 
 	glEnd();
 }
 
+//using it to debug axis movement will be removed
+void CreateSphere(const glm::vec3& position, float radius, const glm::vec3& color) {
 
-#pragma endregion
+	glColor3f(color.r, color.g, color.b);
+	glPushMatrix();
+	glTranslatef(position.x, position.y, position.z);
 
-void renderScene(Shaders& shader) {
+	// Create a sphere using OpenGL
+	GLUquadric* quad = gluNewQuadric();
+	gluSphere(quad, radius, 20, 20);
+	gluDeleteQuadric(quad);
 
-	glm::vec3 rayOrigin = glm::vec3(glm::inverse(camera->view()) * glm::vec4(0, 0, 0, 1));
-	glm::vec3 rayDirection = Application->input->getMousePickRay();
+	glPopMatrix();
 
-	// TODO cambiar esto de sitio
-	for (size_t i = 0; i < Application->root->currentScene->children().size(); ++i)
-	{
-		GameObject* object = Application->root->currentScene->children()[i].get();
-
-		object->Update(0.16f, shader);
-
-		if (object->HasComponent<MeshRenderer>()) {
-
-			BoundingBox bbox = object->GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
-
-			bbox = object->GetTransform()->GetMatrix() * bbox;
-
-			if (CheckRayAABBCollision(rayOrigin, rayDirection, bbox))
-			{
-				Application->input->SetDraggedGameObject(object);
-			}
-
-			if (Application->input->GetMouseButton(1) == KEY_DOWN)
-				if (CheckRayAABBCollision(rayOrigin, rayDirection, bbox))
-				{
-					std::cout << "Hit: " << object->GetName();
-					Application->input->AddToSelection(object);
-				}
-		}
-	}
-
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
-
-void renderSceneFromLight() {
-	glm::mat4 lightProjection, lightView;
-	glm::mat4 lightSpaceMatrix;
-	float near_plane = 1.0f, far_plane = 7.5f;
-	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	lightView = glm::lookAt(glm::vec3(0.0f, 4.0f, 4.0f), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	lightSpaceMatrix = lightProjection * lightView;
-
-	// Render the scene to the depth map
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// Use your shadow shader here
-	shadowShader.Bind();
-	shadowShader.SetUniform("lightSpaceMatrix", lightSpaceMatrix);
-	renderScene(shadowShader); // You need to implement this function to render your scene
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-
 
 static void display_func() {
-
-	renderSceneFromLight();
-
 	glBindFramebuffer(GL_FRAMEBUFFER, Application->gui->fbo);
 	glViewport(0, 0, Application->window->width(), Application->window->height());
 	
@@ -318,12 +306,39 @@ static void display_func() {
 
 
 
-	
+	glm::vec3 rayOrigin = glm::vec3(glm::inverse(camera->view()) * glm::vec4(0, 0, 0, 1));
+	glm::vec3 rayDirection = Application->input->getMousePickRay();
+
 	//Debug for mousepicking
 	//Draw3DRectangle(rayOrigin, rayDirection, 1.0f, 1.0f, 1.0f);
 	
-	renderScene(mainShader);
+
+	// TODO cambiar esto de sitio
+	for (size_t i = 0; i < Application->root->currentScene->children().size(); ++i)
+	{
+		GameObject* object = Application->root->currentScene->children()[i].get();
 	
+		object->Update(0.16f);
+		
+		if (object->HasComponent<MeshRenderer>()) {
+	
+			BoundingBox bbox = object->GetComponent<MeshRenderer>()->GetMesh()->boundingBox();
+	
+			bbox = object->GetTransform()->GetMatrix() * bbox;
+	
+			if (CheckRayAABBCollision(rayOrigin, rayDirection, bbox))
+			{
+				Application->input->SetDraggedGameObject(object);
+			}
+	
+			if (Application->input->GetMouseButton(1) == KEY_DOWN)
+			if (CheckRayAABBCollision(rayOrigin, rayDirection, bbox) )
+			{
+				std::cout << "Hit: " << object->GetName();
+				Application->input->AddToSelection(object);
+			}
+		}
+	}
 	//It has to go AFTER drawing the objects
 	//Application->gizmos->DrawGizmos();
 
@@ -338,7 +353,6 @@ void PauCode2(MyGUI* gui) {
 	if (Application->window->IsOpen()) {
 
 		const auto t0 = hrclock::now();
-
 		display_func();
 	
 		gui->Render();
@@ -372,15 +386,6 @@ int main(int argc, char** argv) {
 	ilutInit();
 
 	init_openGL();
-
-	if (mainShader.LoadShaders("vertex_shader.glsl", "fragment_shader.glsl")) 
-	{
-		//error
-	}
-	if (shadowShader.LoadShaders("vertex_shader.glsl", "fragment_shader.glsl"))
-	{
-		//error
-	}
 
 	camera = Application->camera;
 
