@@ -210,6 +210,8 @@ bool Root::ParentGameObject(GameObject& child, GameObject& father) {
         currentScene->_children.erase(it);
 
         father.AddChild(std::move(_child));
+
+        child.GetComponent<Transform_Component>()->SetOwner(&father);
         return true;
     }
 
