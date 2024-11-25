@@ -74,7 +74,7 @@ void GameObject::Start()
     }
 }
 
-void GameObject::Update(float deltaTime)
+void GameObject::Update(float deltaTime, Shaders shader)
 {
     if (!active)
     {
@@ -88,10 +88,10 @@ void GameObject::Update(float deltaTime)
     
     for (auto& child : children)
 	{
-		child->Update(deltaTime);
+		child->Update(deltaTime,shader);
 	}
 
-    Draw();
+    Draw(shader);
 }
 
 void GameObject::Destroy()
@@ -109,7 +109,7 @@ void GameObject::Destroy()
     }
 }
 
-void GameObject::Draw() const
+void GameObject::Draw(Shaders shader) const
 {
     //std::cout << "Draw GameObject: " << name << std::endl;
     
@@ -122,14 +122,14 @@ void GameObject::Draw() const
         DrawInstancedMatrix();
         break;
     case DrawMode::PushPopMatrix:
-        DrawPushPopMatrix();
+        DrawPushPopMatrix(shader);
         break;
     }
 }
 
 void GameObject::DrawAccumultedMatrix() const
 {
-    //De momento nada ya lo hare en un futuro :)
+    //De momento nada ya lo hare en un futuro :) (broma)
 }
 
 void GameObject::DrawInstancedMatrix() const
@@ -137,7 +137,7 @@ void GameObject::DrawInstancedMatrix() const
 	//De momento nada ya lo hare en un futuro :)
 }
 
-void GameObject::DrawPushPopMatrix() const
+void GameObject::DrawPushPopMatrix(Shaders shader) const
 {
     glPushMatrix();
     glMultMatrixd(transform->GetData());
@@ -145,12 +145,12 @@ void GameObject::DrawPushPopMatrix() const
     if (HasComponent<MeshRenderer>())
     {
         auto meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer->Render();
+        meshRenderer->Render(shader);
     }
 
     for (const auto& child : children)
 	{
-		child->Draw();
+		child->Draw(shader);
 	}
 
     glPopMatrix();

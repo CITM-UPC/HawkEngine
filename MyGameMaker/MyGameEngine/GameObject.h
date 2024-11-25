@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "Mesh.h"
 #include "BoundingBox.h"
+#include "Shaders.h"
 
 class SceneSerializer;
 
@@ -38,9 +39,9 @@ public:
     //void Awake();
     void Start();
     //void FixedUpdate(float fixedDeltaTime);
-    void Update(float deltaTime);
+    void Update(float deltaTime, Shaders shader);
     //void LateUpdate(float deltaTime);
-    void Draw() const;
+    void Draw(Shaders shader) const;
     void Destroy();
 
     void OnEnable();
@@ -86,7 +87,7 @@ private:
 
     void DrawAccumultedMatrix() const;
     void DrawInstancedMatrix() const;
-    void DrawPushPopMatrix() const;
+    void DrawPushPopMatrix(Shaders shader) const;
 
     std::string name;
     std::weak_ptr<GameObject> parent;

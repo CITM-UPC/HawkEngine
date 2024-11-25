@@ -32,7 +32,7 @@ public:
     void SetColor(const glm::vec3& color);
     glm::vec3 GetColor() const;
 
-    void Render() const;
+    void Render(Shaders shader) const;
 
 private:
     std::shared_ptr<Mesh> mesh;

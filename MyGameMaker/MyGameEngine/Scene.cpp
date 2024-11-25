@@ -13,9 +13,10 @@ void Scene::Start()
 
 void Scene::Update(float deltaTime)
 {
+	Shaders guarreria;
 	for (auto& child : children())
 	{
-		child->Update(deltaTime);
+		child->Update(deltaTime,guarreria);
 	}
 }
 

@@ -50,10 +50,11 @@ bool Root::Start()
 }
 
 bool Root::Update(double dt) { 
-
+    
+    Shaders Guarreria2;
     for (shared_ptr<GameObject> object : currentScene->_children) 
     {
-        object->Update(dt);
+        //object->Update(dt, Guarreria2);
     }
 
     if (Application->input->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
@@ -148,10 +149,10 @@ void Root::AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std
     meshRenderer->SetMesh(mesh);
     meshRenderer->SetMaterial(material);
 
-    if (material->loadShaders("vertex_shader.glsl", "fragment_shader.glsl")) {
-        material->useShader = true;
-        material->bindShaders();
-    }
+    //if (material->loadShaders("vertex_shader.glsl", "fragment_shader.glsl")) {
+    //    material->useShader = true;
+    //    material->bindShaders();
+    //}
     meshRenderer->SetImage(image);
 }
 
