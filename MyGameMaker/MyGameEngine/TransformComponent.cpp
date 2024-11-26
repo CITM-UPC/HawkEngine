@@ -43,27 +43,28 @@ std::shared_ptr<Component> Transform_Component::Clone(GameObject* owner)
 
 void Transform_Component::Translate(const glm::dvec3& translation)
 {
-	matrix = glm::translate(matrix, translation);
-    //local_matrix = glm::translate(local_matrix, translation);
-
-    ////------Recursively apply translation to all children---------//
-    //if (owner ) { 
-    //    
-    //    for (GameObject& child : owner->children()) {
-    //        int size = child.children().size();
-    //        child.GetTransform()->Translate(translation);
-
-    //    }
-    //}
+	//matrix = glm::translate(matrix, translation);
+    TranslateLocal(translation);
 }
 
 void Transform_Component::Update(float deltaTime) {
 
+    //UpdateWorldMatrix(glm::dmat4(1.0));
+
+
     if (owner) {
 
+        if(! owner->parent())/*No owner means owner is the scene*/ {
+            UpdateWorldMatrix(glm::dmat4(1.0));
+        }
+
+        //if (owner->children().size() != 0)/*Only the object that are children of the scene*/ {
+        //    UpdateWorldMatrix(glm::dmat4(1.0));
+        //}
+        
         for (GameObject& child : owner->children()) {
             
-            child.GetTransform()->updateWorldMatrix(matrix);
+            child.GetTransform()->UpdateWorldMatrix(matrix);
             //child.GetTransform()->matrix = matrix * child.GetTransform()->matrix;
 
         }
@@ -79,7 +80,8 @@ void Transform_Component::SetPosition(const glm::dvec3& position)
 
 void Transform_Component::Rotate(double rads, const glm::dvec3& axis)
 {
-	matrix = glm::rotate(matrix, rads, axis);
+	//matrix = glm::rotate(matrix, rads, axis);
+    RotateLocal(rads, axis);
 }
 
 void Transform_Component::SetRotation(const glm::dvec3& eulerAngles)

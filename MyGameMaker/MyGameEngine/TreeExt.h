@@ -11,7 +11,7 @@ private:
 	std::list<T> _children;
 
 public:
-	auto& parent() const { return *_parent; }
+	auto parent() const { return _parent; }
 	auto children() const { return readOnlyListView<T>(_children); }
 
 	auto& root() const { return _parent ? _parent->root() : *this; }

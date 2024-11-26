@@ -76,8 +76,12 @@ public:
     }
 
     void TranslateLocal(const glm::dvec3& translation) {
-
+        auto buff = local_matrix;
         local_matrix = glm::translate(local_matrix, translation); 
+
+        if (local_matrix == buff) {
+            int y = 9;
+        }
     }
 
     void RotateLocal(double rads, const glm::dvec3& axis) {
