@@ -69,25 +69,21 @@ public:
         return result;
     }
 
-    /* Update the world matrix based on the parent's world matrix */
-    void UpdateWorldMatrix(const glm::dmat4& parentWorldMatrix) {
-
-        matrix = parentWorldMatrix * local_matrix; 
+    // Update the world matrix based on the parent's world matrix
+    void updateWorldMatrix(const glm::dmat4& parentWorldMatrix) {
+        matrix = parentWorldMatrix * local_matrix; // Compute world matrix
     }
 
-    void TranslateLocal(const glm::dvec3& translation) {
-
-        local_matrix = glm::translate(local_matrix, translation); 
+    void translateLocal(const glm::dvec3& translation) {
+        local_matrix = glm::translate(local_matrix, translation); // Modify local matrix
     }
 
-    void RotateLocal(double rads, const glm::dvec3& axis) {
-
-        local_matrix = glm::rotate(local_matrix, rads, axis); 
+    void rotateLocal(double rads, const glm::dvec3& axis) {
+        local_matrix = glm::rotate(local_matrix, rads, axis); // Modify local matrix
     }
 
-    void SetLocalPosition(const glm::dvec3& position) {
-
-        local_matrix[3] = glm::dvec4(position, 1.0);  
+    void setLocalPosition(const glm::dvec3& position) {
+        local_matrix[3] = glm::dvec4(position, 1.0); // Update local matrix translation directly
     }
 
 protected:

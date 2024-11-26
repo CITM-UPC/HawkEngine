@@ -43,8 +43,8 @@ std::shared_ptr<Component> Transform_Component::Clone(GameObject* owner)
 
 void Transform_Component::Translate(const glm::dvec3& translation)
 {
-	matrix = glm::translate(matrix, translation);
-    //local_matrix = glm::translate(local_matrix, translation);
+	/*matrix = glm::translate(matrix, translation);*/
+    local_matrix = glm::translate(local_matrix, translation);
 
     ////------Recursively apply translation to all children---------//
     //if (owner ) { 
