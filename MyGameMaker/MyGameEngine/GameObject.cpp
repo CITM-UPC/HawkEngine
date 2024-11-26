@@ -33,11 +33,12 @@ GameObject::GameObject(const GameObject& other) :
     cachedComponentType(typeid(Component))
 {
     for (const auto& component : other.components) {
-        /*components[component.first] = component.second->Clone(this);
-        components[component.first]->owner = this;*/
 
-        components[component.first] = component.second;
+        components[component.first] = component.second->Clone(this);
         components[component.first]->owner = this;
+    }
+    if (transform != GetComponent<Transform_Component>()) /*Update Transform ptr*/ {
+        transform = GetComponent<Transform_Component>();
     }
 }
 
@@ -85,18 +86,16 @@ void GameObject::Update(float deltaTime)
     {
         return;
     }
-    LOG(LogType::LOG_ASSIMP, "%s has %d children", GetName().c_str(), children().size());
+    
     std::cout << std::endl << GetName() << "has " << children().size() << " children";
 
-    GetTransform()->owner2 = this;
+    for (auto it = components.begin(); it != components.end(); ++it) {
 
-    for (auto& component : components)
-    {
-        //component.second->owner = this;
-        //component.second->owner2 = this;
-        component.second->Update(deltaTime);
+        std::shared_ptr<Component> component = it->second;
+        component->Update(deltaTime);
+
     }
-    
+
     for (auto& child : children())
 	{
 		child.Update(deltaTime);
@@ -136,6 +135,12 @@ void GameObject::Draw() const
         DrawPushPopMatrix();
         break;
     }
+
+    for (const auto& child : children())
+    {
+        child.Draw();
+    }
+
 }
 
 void GameObject::DrawAccumultedMatrix() const
@@ -158,11 +163,6 @@ void GameObject::DrawPushPopMatrix() const
         auto meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer->Render();
     }
-
-    for (const auto& child : children())
-	{
-		child.Draw();
-	}
 
     glPopMatrix();
 }

@@ -47,9 +47,9 @@ void Transform_Component::Translate(const glm::dvec3& translation)
 
 
     //------Recursively apply translation to all children---------//
-    if (owner2 ) { 
+    if (owner ) { 
         
-        for (GameObject& child : owner2->children()) {
+        for (GameObject& child : owner->children()) {
             int size = child.children().size();
             child.GetTransform()->Translate(translation);
 
