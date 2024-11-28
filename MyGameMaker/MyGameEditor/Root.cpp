@@ -9,6 +9,8 @@
 #include "App.h"
 #include "Input.h"
 
+#include <string>
+
 #include <SDL2/SDL.h>
 
 #include <iostream>
@@ -28,7 +30,16 @@ bool  Root::Awake()
     MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
     auto mesh = make_shared<Mesh>();
     mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+
     AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
+    
+	for (int i = 0; i <= mesh->subMeshes.size(); i++) {
+        auto MarcoVicePresidente2 = CreateGameObject("BakerHouse" + std::to_string(i));
+		AddMeshRenderer(*MarcoVicePresidente2, make_shared<Mesh>(mesh->subMeshes[i]), "Assets/Baker_house.png");
+		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
+	}
+
+  
 
     return true;
 }
