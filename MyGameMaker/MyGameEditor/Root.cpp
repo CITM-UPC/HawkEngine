@@ -6,6 +6,7 @@
 #include "MyGameEngine/Scene.h"
 #include "MyGameEngine/Image.h"
 #include "MyGameEngine/Material.h"
+#include "MyGameEngine/ModelImporter.h"
 #include "App.h"
 #include "Input.h"
 
@@ -27,8 +28,18 @@ bool  Root::Awake()
     auto MarcoVicePresidente = CreateGameObject("BakerHouse");
     MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
     auto mesh = make_shared<Mesh>();
-    mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
-    AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
+	
+    //mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+    ModelImporter meshImp;
+	meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
+
+	for (int i = 0; i <= meshImp.meshes.size()-1; i++) {
+        auto MarcoVicePresidente2 = CreateGameObject("BakerHouse" + std::to_string(i));
+		mesh = meshImp.meshes[i];
+        AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
+		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
+	}
+    
 
     return true;
 }
