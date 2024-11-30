@@ -7,7 +7,6 @@
 #include <string>
 #include <memory>
 #include <glm/glm.hpp>
-#include "assimp/scene.h"
 
 #include "BufferObject.h"
 #include "BoundingBox.h"
@@ -26,7 +25,7 @@ class Mesh {
     std::vector<unsigned int> _indices;
 
     BoundingBox _boundingBox;
-
+    std::vector<Mesh> subMeshes;
 
 public:
     Mesh();
@@ -52,8 +51,6 @@ public:
     inline static void glVertex3(const vec3& v) { glVertex3dv(&v.x); }
 
     void LoadMesh(const char* file_path);
-	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	void ProcessNode(aiNode* node, const aiScene* scene);
 
     bool drawBoundingbox = true;
     bool drawTriangleNormals = false;
@@ -63,8 +60,6 @@ public:
 
     glm::vec3 aabbMin;
     glm::vec3 aabbMax;
-
-    std::vector<Mesh*> subMeshes;
 
 protected:
 

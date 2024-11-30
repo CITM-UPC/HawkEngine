@@ -204,83 +204,10 @@ void Mesh::Draw() const
 	}
 
 }
-void Mesh::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-	std::vector<glm::vec3> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<glm::vec2> texCoords;
-	std::vector<glm::vec3> normals;
-	std::vector<glm::u8vec3> colors;
 
-	// Copy vertices
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-		vertices.push_back(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
-	}
+void Mesh::LoadMesh(const char* file_path)
+{
 
-	// Copy indices
-	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-		aiFace& face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++) {
-			indices.push_back(face.mIndices[j]);
-		}
-	}
-
-	// Copy texture coordinates
-	if (mesh->HasTextureCoords(0)) {
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			texCoords.push_back(glm::vec2(mesh->mTextureCoords[0][i].x, -mesh->mTextureCoords[0][i].y));
-		}
-	}
-
-	// Copy normals
-	if (mesh->HasNormals()) {
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			normals.push_back(glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z));
-		}
-	}
-
-	// Copy colors
-	if (mesh->HasVertexColors(0)) {
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			colors.push_back(glm::u8vec3(mesh->mColors[0][i].r * 255, mesh->mColors[0][i].g * 255, mesh->mColors[0][i].b * 255));
-		}
-	}
-
-	// Create a new Mesh object for this submesh
-	Mesh submesh;
-	submesh.Load(vertices.data(), vertices.size(), indices.data(), indices.size());
-
-	if (!texCoords.empty()) {
-		submesh.loadTexCoords(texCoords.data(), texCoords.size());
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-		glEnableVertexAttribArray(1);
-	}
-
-	if (!normals.empty()) {
-		submesh.LoadNormals(normals.data(), normals.size());
-	}
-
-	if (!colors.empty()) {
-		submesh.LoadColors(colors.data(), colors.size());
-	}
-
-	// Add the submesh to the submeshes vector
-	subMeshes.emplace_back(&submesh);	
-}
-
-void Mesh::ProcessNode(aiNode* node, const aiScene* scene) {
-	// Process each mesh located at the current node
-	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		ProcessMesh(mesh, scene);
-	}
-
-	// Process each child node
-	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		ProcessNode(node->mChildren[i], scene);
-	}
-}
-
-void Mesh::LoadMesh(const char* file_path) {
 	filePath = std::string(file_path);
 
 	cout << endl << file_path;
@@ -288,8 +215,73 @@ void Mesh::LoadMesh(const char* file_path) {
 	const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (scene != nullptr && scene->HasMeshes()) {
-		// Process the root node recursively
-		ProcessNode(scene->mRootNode, scene);
+		std::vector<glm::vec3> all_vertices;
+		std::vector<unsigned int> all_indices;
+		std::vector<glm::vec2> all_texCoords;
+		std::vector<glm::vec3> all_normals;
+		std::vector<glm::u8vec3> all_colors;
+
+		unsigned int vertex_offset = 0;
+
+		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+			aiMesh* mesh = scene->mMeshes[i];
+
+			// Copy vertices
+			for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+				all_vertices.push_back(glm::vec3(mesh->mVertices[j].x, mesh->mVertices[j].y, mesh->mVertices[j].z));
+				
+			}
+			LOG(LogType::LOG_ASSIMP, "Loaded vertices :%d for mesh %d", mesh->mNumVertices, i);
+			// Copy indices
+			for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+				aiFace& face = mesh->mFaces[j];
+				for (unsigned int k = 0; k < face.mNumIndices; k++) {
+					all_indices.push_back(face.mIndices[k] + vertex_offset);
+				}
+			}
+			LOG(LogType::LOG_ASSIMP, "Loaded faces :%d for mesh %d", mesh->mNumFaces, i);
+			// Copy texture coordinates
+			if (mesh->HasTextureCoords(0)) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_texCoords.push_back(glm::vec2(mesh->mTextureCoords[0][j].x, -mesh->mTextureCoords[0][j].y));
+				}
+			}
+
+
+			
+			// Copy normals
+			if (mesh->HasNormals()) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_normals.push_back(glm::vec3(mesh->mNormals[j].x, mesh->mNormals[j].y, mesh->mNormals[j].z));
+				}
+			}
+
+			// Copy colors
+			if (mesh->HasVertexColors(0)) {
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+					all_colors.push_back(glm::u8vec3(mesh->mColors[0][j].r * 255, mesh->mColors[0][j].g * 255, mesh->mColors[0][j].b * 255));
+				}
+			}
+
+			vertex_offset += mesh->mNumVertices;
+		}
+
+		// Load the combined mesh data
+		Load(all_vertices.data(), all_vertices.size(), all_indices.data(), all_indices.size());
+
+		if (!all_texCoords.empty()) {
+			loadTexCoords(all_texCoords.data(), all_texCoords.size());
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+			glEnableVertexAttribArray(1);
+		}
+
+		if (!all_normals.empty()) {
+			LoadNormals(all_normals.data(), all_normals.size());
+		}
+
+		if (!all_colors.empty()) {
+			LoadColors(all_colors.data(), all_colors.size());
+		}
 
 		aiReleaseImport(scene);
 	}
@@ -297,54 +289,7 @@ void Mesh::LoadMesh(const char* file_path) {
 		// Handle error
 		cout << "Error loading mesh: " << file_path << endl;
 	}
-	
 }
-//
-//void Mesh::LoadMesh(const char* file_path)
-//{
-//
-//	filePath = std::string(file_path);
-//
-//	cout << endl << file_path;
-//
-//	const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
-//
-//	if (scene != nullptr && scene->HasMeshes()) {
-//		std::vector<glm::vec3> all_vertices;
-//		std::vector<unsigned int> all_indices;
-//		std::vector<glm::vec2> all_texCoords;
-//		std::vector<glm::vec3> all_normals;
-//		std::vector<glm::u8vec3> all_colors;
-//
-//		unsigned int vertex_offset = 0;
-//
-//		// Process the root node recursively
-//		ProcessNode(scene->mRootNode, scene, vertex_offset, all_vertices, all_indices, all_texCoords, all_normals, all_colors);
-//
-//		// Load the combined mesh data
-//		Load(all_vertices.data(), all_vertices.size(), all_indices.data(), all_indices.size());
-//
-//		if (!all_texCoords.empty()) {
-//			loadTexCoords(all_texCoords.data(), all_texCoords.size());
-//			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-//			glEnableVertexAttribArray(1);
-//		}
-//
-//		if (!all_normals.empty()) {
-//			LoadNormals(all_normals.data(), all_normals.size());
-//		}
-//
-//		if (!all_colors.empty()) {
-//			LoadColors(all_colors.data(), all_colors.size());
-//		}
-//
-//		aiReleaseImport(scene);
-//	}
-//	else {
-//		// Handle error
-//		cout << "Error loading mesh: " << file_path << endl;
-//	}
-//}
 
 std::shared_ptr<Mesh> Mesh::CreateCube()
 {
