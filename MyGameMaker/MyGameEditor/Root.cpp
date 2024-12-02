@@ -25,21 +25,26 @@ bool  Root::Awake()
     AddScene(make_shared<Scene>("Scene1"));
     SetActiveScene("Scene1");
 
-    auto MarcoVicePresidente = CreateGameObject("BakerHouse");
-    MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
-    auto mesh = make_shared<Mesh>();
+    //auto MarcoVicePresidente = CreateGameObject("BakerHouse");
+    //MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
+    //auto mesh = make_shared<Mesh>();
 	
     //mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     ModelImporter meshImp;
-	meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
-
-	for (int i = 0; i <= meshImp.meshes.size()-1; i++) {
-        auto MarcoVicePresidente2 = CreateGameObject("BakerHouse" + std::to_string(i));
-		mesh = meshImp.meshes[i];
-        AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
-		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
-	}
+    auto PauPresidente = meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
     
+	GetActiveScene()->AddGameObject(PauPresidente);
+
+	//for (int i = 0; i <= PauPresidente->children().size(); i++) {
+	//	auto PauVicePresidente = make_shared<GameObject>(PauPresidente->children()[i]);
+	//	GetActiveScene()->AddGameObject(PauVicePresidente);
+	//	//ParentGameObject(*PauPresidente->children()[i], *PauPresidente);
+	//} 
+
+   //for (auto& child : PauPresidente->children())
+   //{
+	//	GetActiveScene()->AddGameObject(make_shared<GameObject>(child));
+   //}
 
     return true;
 }

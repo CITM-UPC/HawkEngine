@@ -9,7 +9,7 @@ using namespace std;
 
 class ModelImporter {
 public:
-	void loadFromFile(const std::string& path);
+	shared_ptr<GameObject> loadFromFile(const std::string& path);
 
 
 	std::vector<std::shared_ptr<Mesh>> meshes;

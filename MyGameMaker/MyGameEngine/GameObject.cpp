@@ -40,6 +40,9 @@ GameObject::GameObject(const GameObject& other) :
     if (transform != GetComponent<Transform_Component>()) /*Update Transform ptr*/ {
         transform = GetComponent<Transform_Component>();
     }
+	for (const auto& child : other.children()) {
+		emplaceChild(child);
+	}
 }
 
 GameObject& GameObject::operator=(const GameObject& other) {
