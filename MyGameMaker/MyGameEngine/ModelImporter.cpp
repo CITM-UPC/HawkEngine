@@ -7,6 +7,7 @@
 #include <assimp/mesh.h>
 #include "Material.h"
 #include "MeshRendererComponent.h"
+#include "TransformComponent.h"
 #include "Image.h"
 //#include "ImageImporter.h"
 #include "GameObject.h"
@@ -21,8 +22,8 @@ static mat4 aiMat4ToMat4(const aiMatrix4x4& aiMat) {
 
 GameObject graphicObjectFromNode(const aiScene& scene, const aiNode& node, const vector<shared_ptr<Mesh>>& meshes,const vector<shared_ptr<Material>>& materials) {
 	GameObject obj;
-
-	obj.GetTransform()->SetMatrix(aiMat4ToMat4(node.mTransformation));
+	
+	obj.GetTransform()->SetLocalMatrix(aiMat4ToMat4(node.mTransformation));
 
 	for (unsigned int i = 0; i < node.mNumMeshes; ++i) {
 		const auto meshIndex = node.mMeshes[i];
@@ -34,8 +35,10 @@ GameObject graphicObjectFromNode(const aiScene& scene, const aiNode& node, const
 		meshComponent->SetMaterial(materials[materialIndex]);
 	}
 
-	for (unsigned int i = 0; i < node.mNumChildren; ++i) obj.emplaceChild(graphicObjectFromNode(scene, *node.mChildren[i], meshes, materials));
-
+	for (unsigned int i = 0; i < node.mNumChildren; ++i) 
+	{
+		obj.emplaceChild(graphicObjectFromNode(scene, *node.mChildren[i], meshes, materials));
+	}
 	return obj;
 }
 
@@ -97,7 +100,7 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			else {
 				shared_ptr<Image> image = std::make_shared<Image>();
 				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
-				image->LoadTexture((basePath / textureFileName).string());
+				image->LoadTexture("Assets/Baker_House.png"/*(basePath / textureFileName).string()*/);
 				material->setImage(image);
 			}
 

@@ -6,6 +6,7 @@
 #include "MyGameEngine/Scene.h"
 #include "MyGameEngine/Image.h"
 #include "MyGameEngine/Material.h"
+#include "MyGameEngine/ModelImporter.h"
 #include "App.h"
 #include "Input.h"
 
@@ -23,8 +24,14 @@ bool  Root::Awake()
 {
 
     Application->scene_serializer->DeSerialize("Assets/Salimos.scene");
+    AddScene(make_shared<Scene>("Scene1"));
+    SetActiveScene("Scene1");
 
+	ModelImporter meshImp;
 
+    auto PauPresidente = meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
+
+    GetActiveScene()->AddGameObject(PauPresidente);
 
     return true;
 }

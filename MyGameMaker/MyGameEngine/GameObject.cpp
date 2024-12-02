@@ -40,6 +40,7 @@ GameObject::GameObject(const GameObject& other) :
     if (transform != GetComponent<Transform_Component>()) /*Update Transform ptr*/ {
         transform = GetComponent<Transform_Component>();
     }
+
     //--------Pass children to copy------------//
     for (const auto& child : other.children()) {
         
