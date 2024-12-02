@@ -43,7 +43,7 @@ bool UIInspector::Draw()
     ImGui::SetNextWindowClass(&windowClass);
     windowClass.DockingAllowUnclassed = false;
 
-    if (ImGui::Begin("Inspector", &enabled, inspectorFlags))
+    if (ImGui::Begin("Inspector", nullptr, inspectorFlags))
     {
         ImGuiIO& io = ImGui::GetIO();
 
@@ -118,17 +118,17 @@ bool UIInspector::Draw()
 
                 if (mesh)
                 {
-                    ImGui::Text("Mesh");
-                    ImGui::Separator();
+                    if (ImGui::CollapsingHeader("Mesh"))
+                    {
+                        ImGui::Text("Vertices: %d", mesh->vertices().size());
+                        ImGui::Text("Indices: %d", mesh->indices().size());
 
-                    ImGui::Text("Vertices: %d", mesh->vertices().size());
-                    ImGui::Text("Indices: %d", mesh->indices().size());
+                        bool& triNormals = mesh->drawTriangleNormals;
+                        bool& vertexNormals = mesh->drawVertexNormals;
 
-                    bool& triNormals = mesh->drawTriangleNormals;
-                    bool& vertexNormals = mesh->drawVertexNormals;
-
-                    ImGui::Checkbox("Tri Normals", &triNormals);
-                    ImGui::Checkbox("Vertex Normals", &vertexNormals);
+                        ImGui::Checkbox("Tri Normals", &triNormals);
+                        ImGui::Checkbox("Vertex Normals", &vertexNormals);
+                    }    
                 }
 
                 ImGui::Separator();
@@ -136,13 +136,46 @@ bool UIInspector::Draw()
                 std::shared_ptr<Image> image = selectedGameObject->GetComponent<MeshRenderer>()->GetImage();
                 if (image)
                 {
-                    ImGui::Text("Image");
-                    ImGui::Separator();
+                    if (ImGui::CollapsingHeader("Image"))
+                    {
+                        ImGui::Text("Width: %d", image->width());
+                        ImGui::Text("Heigth: %d", image->height());
 
-                    ImGui::Text("Width: %d", image->width());
-                    ImGui::Text("Heigth: %d", image->width());
+                        ImGui::Separator();
+
+                        auto textureID = image.get()->id();
+                        if (textureID)
+                        {
+							ImGui::Text("Preview: %dx%d", image->width(), image->height());
+                            ImVec2 imageSize = ImVec2(static_cast<float>(image->width()), static_cast<float>(image->height()));
+                        
+							float maxPreviewSize = 200.0f;
+                            if (imageSize.x > maxPreviewSize || imageSize.y > maxPreviewSize)
+                            {
+								float aspectRatio = imageSize.x / imageSize.y;
+								if (aspectRatio > 1.0f)
+								{
+									imageSize.x = maxPreviewSize;
+									imageSize.y = maxPreviewSize / aspectRatio;
+								}
+								else
+								{
+                                    imageSize.y = maxPreviewSize;
+									imageSize.x = maxPreviewSize * aspectRatio;
+								}
+                            }
+							ImGui::Image((void*)(intptr_t)textureID, imageSize);
+                        }
+                        else
+                        {
+							ImGui::Text("No texture loaded");
+                        }
+                    
+                    }
                 }
             }
+
+            // Condiciones de otros componentes 
         }
 
         ImGui::End();

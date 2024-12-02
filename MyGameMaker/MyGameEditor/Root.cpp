@@ -6,7 +6,6 @@
 #include "MyGameEngine/Scene.h"
 #include "MyGameEngine/Image.h"
 #include "MyGameEngine/Material.h"
-#include "MyGameEngine/ModelImporter.h"
 #include "App.h"
 #include "Input.h"
 
@@ -22,29 +21,18 @@ Root::Root(App* app) : Module(app) { ; }
 
 bool  Root::Awake()
 {
+
+    Application->scene_serializer->DeSerialize("Assets/Salimos.scene");
     AddScene(make_shared<Scene>("Scene1"));
     SetActiveScene("Scene1");
 
-    //auto MarcoVicePresidente = CreateGameObject("BakerHouse");
-    //MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
-    //auto mesh = make_shared<Mesh>();
-	
-    //mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
-    ModelImporter meshImp;
-    auto PauPresidente = meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
-    
-	GetActiveScene()->AddGameObject(PauPresidente);
 
-	//for (int i = 0; i <= PauPresidente->children().size(); i++) {
-	//	auto PauVicePresidente = make_shared<GameObject>(PauPresidente->children()[i]);
-	//	GetActiveScene()->AddGameObject(PauVicePresidente);
-	//	//ParentGameObject(*PauPresidente->children()[i], *PauPresidente);
-	//} 
+    auto MarcoVicePresidente = CreateGameObject("BakerHouse");
+    MarcoVicePresidente->GetTransform()->GetPosition() = vec3(0, 0, 0);
+    auto mesh = make_shared<Mesh>();
+    mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+    AddMeshRenderer(*MarcoVicePresidente, mesh, "Assets/Baker_house.png");
 
-   //for (auto& child : PauPresidente->children())
-   //{
-	//	GetActiveScene()->AddGameObject(make_shared<GameObject>(child));
-   //}
 
     return true;
 }
@@ -61,7 +49,7 @@ bool Root::Start()
 
 bool Root::Update(double dt) {
 
-    LOG(LogType::LOG_INFO, " %d num objects in scene", currentScene->children().size());
+    //LOG(LogType::LOG_INFO, "Active Scene %s", currentScene->GetName().c_str());
 
     for (shared_ptr<GameObject> object : currentScene->_children)
     {
@@ -71,8 +59,17 @@ bool Root::Update(double dt) {
     if (Application->input->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
 
         //destroy scene
-
     }
+
+
+    //if press 1 active scene Viernes13 and press 2 active scene Salimos
+    if (Application->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
+        Application->scene_serializer->DeSerialize("Assets/Viernes13.scene");
+	}
+    else if (Application->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
+        Application->scene_serializer->DeSerialize("Assets/Salimos.scene");
+    }
+    
 
     return true;
 }
@@ -213,8 +210,10 @@ bool Root::ParentGameObject(GameObject& child, GameObject& father) {
         if (*currentScene->_children[i] == child) {
 
             std::shared_ptr<GameObject> _child = currentScene->_children[i];
-            father.emplaceChild(*_child);
+            auto& object = father.emplaceChild(*_child);
             currentScene->_children.erase(currentScene->_children.begin() + i);
+
+            object.GetTransform()->UpdateLocalMatrix( father.GetTransform()->GetMatrix() );
 
             return true;
 

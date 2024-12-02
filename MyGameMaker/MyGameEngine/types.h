@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <yaml-cpp/yaml.h>
 
+
 // Math constants
 #define PI 3.14159265358979323846f;
 #define DEGTORAD 0.01745329251994329577f;
@@ -39,6 +40,7 @@ using u8vec3 = glm::u8vec3;
 
 // Specialize YAML::convert for glm::dvec3
 namespace YAML {
+    
     template<>
     struct convert<glm::dvec3> {
         static Node encode(const glm::dvec3& rhs) {
@@ -61,6 +63,40 @@ namespace YAML {
             return true;
         }
     };
+
+
+
+}
+
+
+namespace YAML {
+    template<>
+    struct convert<glm::dmat4> {
+        static inline Node encode(const glm::dmat4& rhs) {
+            Node node;
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    node["row" + std::to_string(i)]["col" + std::to_string(j)] = rhs[i][j];
+                }
+            }
+            return node;
+        }
+
+        static inline bool decode(const Node& node, glm::dmat4& rhs) {
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    std::string rowKey = "row" + std::to_string(i);
+                    std::string colKey = "col" + std::to_string(j);
+
+                    if (!node[rowKey] || !node[rowKey][colKey]) {
+                        return false;
+                    }
+                    rhs[i][j] = node[rowKey][colKey].as<double>();
+                }
+            }
+            return true;
+        }
+    };
 }
 
 namespace Colors {
@@ -76,6 +112,10 @@ inline const char* const PATH(const char* folder, const char* file)
 	sprintf_s(path, MString, "%s/%s", folder, file);
 	return path;
 }
+
+// Directories
+#define ASSETS_PATH "Assets\\"
+#define LIBRARY_PATH "Library\\"
 
 // Config
 #define TITLE "HawkEngine"
