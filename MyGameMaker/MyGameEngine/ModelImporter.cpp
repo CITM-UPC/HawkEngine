@@ -30,15 +30,18 @@ void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& no
 		const auto materialIndex = scene.mMeshes[meshIndex]->mMaterialIndex;
 
 		//auto& child = i == 0 ? obj : obj.emplaceChild();
+		
 		auto meshComponent = obj.AddComponent<MeshRenderer>();
 		meshComponent->SetMesh(meshes[meshIndex]);
 		meshComponent->SetMaterial(materials[materialIndex]);
+		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
 	}
 
 	for (unsigned int i = 0; i < node.mNumChildren; ++i)
 	{
-		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
+
 	 	graphicObjectFromNode(scene, *node.mChildren[i], meshes, materials);
+		
 	}
 
 }
