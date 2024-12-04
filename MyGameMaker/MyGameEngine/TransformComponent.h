@@ -168,7 +168,7 @@ private:
         }
 
     }
-
+	friend class GameObject;
     void UpdateLocalMatrix(const glm::dmat4& parentWorldMatrix) {
         local_matrix = glm::inverse( parentWorldMatrix  ) * matrix;
     }
