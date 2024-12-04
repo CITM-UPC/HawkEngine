@@ -37,8 +37,13 @@ bool  Root::Awake()
         auto MarcoVicePresidente2 = meshImp.meshGameObjects[i];
 		//mesh = meshImp.meshes[i];
         //AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
-        currentScene->_children.push_back(MarcoVicePresidente2);
-		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
+        
+        currentScene->_children.emplace_back(MarcoVicePresidente2);
+        if (currentScene->_children[i]->GetTransform()->GetPosition() == vec3(0,0,0)) {
+            int a = 0;
+        }
+
+		//ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
 	}
     
 

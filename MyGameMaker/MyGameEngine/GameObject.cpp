@@ -41,11 +41,15 @@ GameObject::GameObject(const GameObject& other) :
         transform = GetComponent<Transform_Component>();
     }
 
+    if (transform->GetPosition() == vec3(0,0,0)) {
+        int a = 9;
+    }
+
     //--------Pass children to copy------------//
     for (const auto& child : other.children()) {
 
         auto& new_child = emplaceChild(child);
-        new_child.GetTransform()->UpdateLocalMatrix(this->GetTransform()->matrix);
+      //  new_child.GetTransform()->UpdateLocalMatrix(this->GetTransform()->matrix);
     }
 }
 
