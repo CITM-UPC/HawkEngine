@@ -5,6 +5,10 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/mesh.h>
+#include "Material.h"
+#include "MeshRendererComponent.h"
+#include "TransformComponent.h"
+#include "Image.h"
 //#include "ImageImporter.h"
 #include "GameObject.h"
 using namespace std;
@@ -16,24 +20,27 @@ static mat4 aiMat4ToMat4(const aiMatrix4x4& aiMat) {
 	return mat;
 }
 
-GameObject graphicObjectFromNode(const aiScene& scene, const aiNode& node, const vector<shared_ptr<Mesh>>& meshes/*,const vector<shared_ptr<Material>>& materials*/) {
+void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& node, const vector<shared_ptr<Mesh>>& meshes, const vector<shared_ptr<Material>>& materials) {
 	GameObject obj;
 
-	obj.GetTransform()->SetMatrix(aiMat4ToMat4(node.mTransformation));
+	obj.GetTransform()->SetLocalMatrix(aiMat4ToMat4(node.mTransformation));
 
 	for (unsigned int i = 0; i < node.mNumMeshes; ++i) {
 		const auto meshIndex = node.mMeshes[i];
 		const auto materialIndex = scene.mMeshes[meshIndex]->mMaterialIndex;
 
-		auto& child = i == 0 ? obj : obj.emplaceChild();
-	/*	auto& meshComponent = child.emplaceComponent<MeshComponent>();
-		meshComponent.setMesh(meshes[meshIndex]);
-		meshComponent.setMaterial(materials[materialIndex]);*/
+		//auto& child = i == 0 ? obj : obj.emplaceChild();
+		auto meshComponent = obj.AddComponent<MeshRenderer>();
+		meshComponent->SetMesh(meshes[meshIndex]);
+		meshComponent->SetMaterial(materials[materialIndex]);
 	}
 
-	for (unsigned int i = 0; i < node.mNumChildren; ++i) obj.emplaceChild(graphicObjectFromNode(scene, *node.mChildren[i], meshes/*, materials*/));
+	for (unsigned int i = 0; i < node.mNumChildren; ++i)
+	{
+		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
+	 	graphicObjectFromNode(scene, *node.mChildren[i], meshes, materials);
+	}
 
-	return obj;
 }
 
 vector<shared_ptr<Mesh>> createMeshesFromFBX(const aiScene& scene) {
@@ -76,54 +83,89 @@ vector<shared_ptr<Mesh>> createMeshesFromFBX(const aiScene& scene) {
 	return meshess;
 }
 
-//static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene, const fs::path& basePath) {
-//
-//	vector<shared_ptr<Material>> materials;
-//	map<string, shared_ptr<Image>> images;
-//
-//	for (unsigned int i = 0; i < scene.mNumMaterials; ++i) {
-//		const auto* fbx_material = scene.mMaterials[i];
-//		auto material = make_shared<Material>();
-//
-//		if (fbx_material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
-//			aiString texturePath;
-//			fbx_material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-//			const string textureFileName = fs::path(texturePath.C_Str()).filename().string();
-//			const auto image_itr = images.find(textureFileName);
-//			if (image_itr != images.end()) material->texture.setImage(image_itr->second);
-//			else {
-//				auto image = ImageImporter::loadFromFile((basePath / textureFileName).string());
-//				images.insert({ textureFileName, image });
-//				material->texture.setImage(image);
-//			}
-//
-//			auto uWrapMode = aiTextureMapMode_Wrap;
-//			auto vWrapMode = aiTextureMapMode_Wrap;
-//			fbx_material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), uWrapMode);
-//			fbx_material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), vWrapMode);
-//			assert(uWrapMode == aiTextureMapMode_Wrap);
-//			assert(vWrapMode == aiTextureMapMode_Wrap);
-//
-//			unsigned int flags = 0;
-//			fbx_material->Get(AI_MATKEY_TEXFLAGS_DIFFUSE(0), flags);
-//			assert(flags == 0);
-//		}
-//
-//		aiColor4D color;
-//		fbx_material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-//		material->color = color4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
-//
-//		materials.push_back(material);
-//	}
-//	return materials;
-//}
+static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene, const fs::path& basePath) {
+
+	vector<shared_ptr<Material>> materials;
+	map<string, shared_ptr<Image>> images;
+
+	for (unsigned int i = 0; i < scene.mNumMaterials; ++i) {
+		const auto* fbx_material = scene.mMaterials[i];
+		auto material = make_shared<Material>();
+
+		if (fbx_material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+			aiString texturePath;
+			fbx_material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+			const string textureFileName = fs::path(texturePath.C_Str()).filename().string();
+			const auto image_itr = images.find(textureFileName);
+			if (image_itr != images.end()) material->setImage(image_itr->second);
+			else {
+				shared_ptr<Image> image = std::make_shared<Image>();
+				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
+				image->LoadTexture("Assets/Baker_House.png"/*(basePath / textureFileName).string()*/);
+				material->setImage(image);
+			}
+
+			auto uWrapMode = aiTextureMapMode_Wrap;
+			auto vWrapMode = aiTextureMapMode_Wrap;
+			fbx_material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), uWrapMode);
+			fbx_material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), vWrapMode);
+			assert(uWrapMode == aiTextureMapMode_Wrap);
+			assert(vWrapMode == aiTextureMapMode_Wrap);
+
+			unsigned int flags = 0;
+			fbx_material->Get(AI_MATKEY_TEXFLAGS_DIFFUSE(0), flags);
+			assert(flags == 0);
+		}
+		else
+		{
+			aiString texturePath;
+			fbx_material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+			const string textureFileName = fs::path(texturePath.C_Str()).filename().string();
+			const auto image_itr = images.find(textureFileName);
+			if (image_itr != images.end()) material->setImage(image_itr->second);
+			else {
+				shared_ptr<Image> image = std::make_shared<Image>();
+				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
+				image->LoadTexture("Assets/Baker_House.png"/*(basePath / textureFileName).string()*/);
+				material->setImage(image);
+			}
+
+			auto uWrapMode = aiTextureMapMode_Wrap;
+			auto vWrapMode = aiTextureMapMode_Wrap;
+			fbx_material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), uWrapMode);
+			fbx_material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), vWrapMode);
+			assert(uWrapMode == aiTextureMapMode_Wrap);
+			assert(vWrapMode == aiTextureMapMode_Wrap);
+
+			unsigned int flags = 0;
+			fbx_material->Get(AI_MATKEY_TEXFLAGS_DIFFUSE(0), flags);
+			assert(flags == 0);
+		}
+
+		//aiColor4D color;
+		//fbx_material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		//material-> color = color4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+
+		if (material == nullptr) {
+
+			materials;
+		}
+
+		if (material->image().id() != NULL) {
+
+		}
+
+		materials.push_back(material);
+	}
+	return materials;
+}
 
 void ModelImporter::loadFromFile(const std::string& path) {
 	const aiScene* fbx_scene = aiImportFile(path.c_str(), aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_TransformUVCoords | aiProcess_FlipUVs);
 	aiGetErrorString();
 	meshes = createMeshesFromFBX(*fbx_scene);
-	//const auto materials = createMaterialsFromFBX(*fbx_scene, fs::absolute(path).parent_path());
-	GameObject fbx_obj = graphicObjectFromNode(*fbx_scene, *fbx_scene->mRootNode, meshes/*, materials*/);
+	const auto materials = createMaterialsFromFBX(*fbx_scene, fs::absolute(path).parent_path());
+	/*GameObject fbx_obj =*/ graphicObjectFromNode(*fbx_scene, *fbx_scene->mRootNode, meshes, materials);
 	aiReleaseImport(fbx_scene);
-//	return fbx_obj;
+	//return std::make_shared<GameObject>(fbx_obj);
 }

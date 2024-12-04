@@ -33,10 +33,11 @@ bool  Root::Awake()
     ModelImporter meshImp;
 	meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
 
-	for (int i = 0; i <= meshImp.meshes.size()-1; i++) {
-        auto MarcoVicePresidente2 = CreateGameObject("BakerHouse" + std::to_string(i));
-		mesh = meshImp.meshes[i];
-        AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
+    for (int i = 0; i < meshImp.meshGameObjects.size(); i++) {
+        auto MarcoVicePresidente2 = meshImp.meshGameObjects[i];
+		//mesh = meshImp.meshes[i];
+        //AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
+        currentScene->_children.push_back(MarcoVicePresidente2);
 		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
 	}
     
