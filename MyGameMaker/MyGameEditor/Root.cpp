@@ -39,11 +39,11 @@ bool  Root::Awake()
         //AddMeshRenderer(*MarcoVicePresidente2, mesh, "Assets/Baker_house.png");
         
         currentScene->_children.emplace_back(MarcoVicePresidente2);
-        if (currentScene->_children[i]->GetTransform()->GetPosition() == vec3(0,0,0)) {
-            int a = 0;
-        }
+        //if (currentScene->_children[i]->GetTransform()->GetPosition() == vec3(0,0,0)) {
+        //    int a = 0;
+        //}
 
-		//ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
+		ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
 	}
     
 
