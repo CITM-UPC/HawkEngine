@@ -3,7 +3,6 @@
 in vec2 TexCoord; // Texture coordinate of the fragment
 in vec3 FragPos; // Position of the fragment
 in vec3 Normal; // Normal of the fragment
-in vec4 VertexColor; // Color of the vertex
 
 out vec4 FragColor;
 
@@ -48,13 +47,13 @@ void main()
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
     // Point lights
+   
     result += CalcPointLight(pointLights, norm, FragPos, viewDir);
+    
 
     // Sample the texture using the texture coordinates
     vec4 texColor = texture(texture1, TexCoord);
-
-    // Combine the texture color with the vertex color
-    FragColor = vec4(result, 1.0) * texColor * VertexColor;
+    FragColor = vec4(result, 1.0) * texColor;
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

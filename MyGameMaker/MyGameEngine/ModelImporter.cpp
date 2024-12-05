@@ -11,6 +11,7 @@
 #include "Image.h"
 //#include "ImageImporter.h"
 #include "GameObject.h"
+#include "glm/glm.hpp"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -34,6 +35,8 @@ void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& no
 		auto meshComponent = obj.AddComponent<MeshRenderer>();
 		meshComponent->SetMesh(meshes[meshIndex]);
 		meshComponent->SetMaterial(materials[materialIndex]);
+		meshComponent->GetMaterial()->useShader = true;
+		meshComponent->GetMaterial()->loadShaders("Assets/Shaders/vertex_shader.glsl", "Assets/Shaders/fragment_shader.glsl");
 		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
 	}
 
@@ -104,7 +107,7 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			else {
 				shared_ptr<Image> image = std::make_shared<Image>();
 				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
-				image->LoadTexture("Assets/Baker_House.png"/*(basePath / textureFileName).string()*/);
+				image->LoadTexture((basePath / textureFileName).string());
 				material->setImage(image);
 			}
 
@@ -129,7 +132,7 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			else {
 				shared_ptr<Image> image = std::make_shared<Image>();
 				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
-				image->LoadTexture("Assets/Baker_House.png"/*(basePath / textureFileName).string()*/);
+				image->LoadTexture((basePath / textureFileName).string());
 				material->setImage(image);
 			}
 
@@ -145,9 +148,9 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			assert(flags == 0);
 		}
 
-		//aiColor4D color;
-		//fbx_material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		//material-> color = color4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+		aiColor4D color;
+		fbx_material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		material->color = color4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
 
 		if (material == nullptr) {
 
