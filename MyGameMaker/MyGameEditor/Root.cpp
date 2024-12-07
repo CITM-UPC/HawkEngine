@@ -62,7 +62,6 @@ bool Root::Start()
 
 bool Root::Update(double dt) {
 
-    LOG(LogType::LOG_INFO, " %d num objects in scene", currentScene->children().size());
 
     for (shared_ptr<GameObject> object : currentScene->_children)
     {

@@ -9,9 +9,14 @@
 #include "MeshRendererComponent.h"
 #include "TransformComponent.h"
 #include "Image.h"
+
 //#include "ImageImporter.h"
 #include "GameObject.h"
 #include "glm/glm.hpp"
+
+// cosa ilegal
+#include "../MyGameEditor/Log.h"
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -35,8 +40,8 @@ void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& no
 		auto meshComponent = obj.AddComponent<MeshRenderer>();
 		meshComponent->SetMesh(meshes[meshIndex]);
 		meshComponent->SetMaterial(materials[materialIndex]);
-		meshComponent->GetMaterial()->useShader = true;
-		meshComponent->GetMaterial()->loadShaders("Assets/Shaders/vertex_shader.glsl", "Assets/Shaders/fragment_shader.glsl");
+		meshComponent->GetMaterial()->useShader = false;
+		//meshComponent->GetMaterial()->loadShaders("Assets/Shaders/vertex_shader.glsl", "Assets/Shaders/fragment_shader.glsl");
 		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
 	}
 
@@ -151,6 +156,8 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 		aiColor4D color;
 		fbx_material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 		material->color = color4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+
+		LOG(LogType::LOG_ASSIMP, "color %f %f %f %f ", color.r, color.g, color.b, color.a);
 
 		if (material == nullptr) {
 
