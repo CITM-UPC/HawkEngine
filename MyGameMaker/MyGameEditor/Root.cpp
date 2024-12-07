@@ -8,7 +8,7 @@
 #include "MyGameEngine/Material.h"
 #include "App.h"
 #include "Input.h"
-
+#include "MyGameEngine/GameObject.h"
 #include <SDL2/SDL.h>
 
 #include <iostream>

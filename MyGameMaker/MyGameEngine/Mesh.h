@@ -14,6 +14,7 @@
 
 class SceneSerializer;
 
+
 class Mesh {
     BufferObject vertices_buffer;
     BufferObject indices_buffer;

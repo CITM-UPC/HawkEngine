@@ -2,6 +2,7 @@
 #include "MeshRendererComponent.h"
 #include "../MyGameEditor/App.h"
 #include "../MyGameEditor/Log.h"
+//#include "BoundingBox.h"
 #include <iostream>
 
 unsigned int GameObject::nextGid = 1;
@@ -357,3 +358,5 @@ void GameObject::RemoveChild(GameObject* child)
 		}
 	}
 }
+
+BoundingBox GameObject::localBoundingBox() const { return mesh ? mesh->boundingBox() : BoundingBox(); }

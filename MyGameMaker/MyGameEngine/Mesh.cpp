@@ -49,13 +49,8 @@ void Mesh::Load(const glm::vec3* vertices, size_t num_verts, const unsigned int*
 }
 
 void Mesh::drawBoundingBox(const BoundingBox& bbox) {
-	glLineWidth(2.0);
-	drawWiredQuad(bbox.v000(), bbox.v001(), bbox.v011(), bbox.v010());
-	drawWiredQuad(bbox.v100(), bbox.v101(), bbox.v111(), bbox.v110());
-	drawWiredQuad(bbox.v000(), bbox.v001(), bbox.v101(), bbox.v100());
-	drawWiredQuad(bbox.v010(), bbox.v011(), bbox.v111(), bbox.v110());
-	drawWiredQuad(bbox.v000(), bbox.v010(), bbox.v110(), bbox.v100());
-	drawWiredQuad(bbox.v001(), bbox.v011(), bbox.v111(), bbox.v101());
+	
+	bbox.draw();
 
 }
 
