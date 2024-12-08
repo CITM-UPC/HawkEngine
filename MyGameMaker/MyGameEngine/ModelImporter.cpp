@@ -1,3 +1,4 @@
+
 #include "ModelImporter.h"
 #include <map>
 #include <filesystem>
@@ -12,8 +13,9 @@
 
 //#include "ImageImporter.h"
 #include "GameObject.h"
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/glm.hpp"
-
+#include "glm/gtx/matrix_decompose.hpp"
 // cosa ilegal
 #include "../MyGameEditor/Log.h"
 
@@ -26,10 +28,48 @@ static mat4 aiMat4ToMat4(const aiMatrix4x4& aiMat) {
 	return mat;
 }
 
+
+static void decomposeMatrix(const mat4& matrix, vec3& scale, glm::quat& rotation, vec3& translation) {
+	// Extraer la traslación
+	translation = vec3(matrix[3]);
+
+	// Extraer la escala
+	scale = vec3(
+		length(vec3(matrix[0])),
+		length(vec3(matrix[1])),
+		length(vec3(matrix[2]))
+	);
+
+	// Remover la escala de la matriz
+	mat4 rotationMatrix = matrix;
+	rotationMatrix[0] /= scale.x;
+	rotationMatrix[1] /= scale.y;
+	rotationMatrix[2] /= scale.z;
+
+	// Extraer la rotación
+	rotation = glm::quat(vec3(0.0f, 0.0f, 0.0f));
+}
+
 void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& node, const vector<shared_ptr<Mesh>>& meshes, const vector<shared_ptr<Material>>& materials) {
 	GameObject obj;
+	mat4 localMatrix = aiMat4ToMat4(node.mTransformation);
 
-	obj.GetTransform()->SetLocalMatrix(aiMat4ToMat4(node.mTransformation));
+	// Descomponer la matriz de transformación
+	vec3 scale, translation, skew;
+	vec4 perspective;
+	glm::quat rotation;
+	decomposeMatrix(localMatrix, scale, rotation, translation);
+
+	// Ajustar la escala a 1, 1, 1
+	scale = vec3(1.0f, 1.0f, 1.0f);
+
+	// Volver a componer la matriz de transformación
+	mat4 rotationMatrix = glm::mat4_cast(rotation);
+	mat4 scaleMatrix = glm::scale(mat4(1.0f), scale);
+	mat4 translationMatrix = glm::translate(mat4(1.0f), translation);
+	localMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+	obj.GetTransform()->SetLocalMatrix(localMatrix);
 
 	for (unsigned int i = 0; i < node.mNumMeshes; ++i) {
 		const auto meshIndex = node.mMeshes[i];
@@ -174,10 +214,14 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 }
 
 void ModelImporter::loadFromFile(const std::string& path) {
-	const aiScene* fbx_scene = aiImportFile(path.c_str(), aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_TransformUVCoords | aiProcess_FlipUVs);
+	const aiScene* fbx_scene = aiImportFile(path.c_str(), aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_JoinIdenticalVertices | 
+		aiProcess_GenUVCoords | aiProcess_TransformUVCoords | aiProcess_FlipUVs );
 	aiGetErrorString();
 	meshes = createMeshesFromFBX(*fbx_scene);
 	const auto materials = createMaterialsFromFBX(*fbx_scene, fs::absolute(path).parent_path());
+
+
+
 	/*GameObject fbx_obj =*/ graphicObjectFromNode(*fbx_scene, *fbx_scene->mRootNode, meshes, materials);
 	aiReleaseImport(fbx_scene);
 	//return std::make_shared<GameObject>(fbx_obj);

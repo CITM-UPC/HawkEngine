@@ -31,7 +31,7 @@ bool  Root::Awake()
 	
     //mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     ModelImporter meshImp;
-	meshImp.loadFromFile("Assets/Meshes/Street environment_V01.FBX");
+	meshImp.loadFromFile("Assets/Meshes/BakerHouse.fbx");
 
     for (int i = 0; i < meshImp.meshGameObjects.size(); i++) {
         auto MarcoVicePresidente2 = meshImp.meshGameObjects[i];
