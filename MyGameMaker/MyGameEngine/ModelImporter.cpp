@@ -81,6 +81,8 @@ void ModelImporter::graphicObjectFromNode(const aiScene& scene, const aiNode& no
 		meshComponent->SetMesh(meshes[meshIndex]);
 		meshComponent->SetMaterial(materials[materialIndex]);
 		meshComponent->GetMaterial()->useShader = false;
+		meshComponent->SetImage(meshComponent->GetMaterial()->imagePtr);
+
 		//meshComponent->GetMaterial()->loadShaders("Assets/Shaders/vertex_shader.glsl", "Assets/Shaders/fragment_shader.glsl");
 		meshGameObjects.push_back(std::make_shared<GameObject>(obj));
 	}
@@ -152,7 +154,7 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			else {
 				shared_ptr<Image> image = std::make_shared<Image>();
 				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
-				image->LoadTexture((basePath / textureFileName).string());
+				image->LoadTexture("Assets/default.png"/*(basePath / textureFileName).string()*/);
 				material->setImage(image);
 			}
 
@@ -177,7 +179,7 @@ static vector<shared_ptr<Material>> createMaterialsFromFBX(const aiScene& scene,
 			else {
 				shared_ptr<Image> image = std::make_shared<Image>();
 				//images.insert({ textureFileName, LoadTexture((basePath / textureFileName).string()) });
-				image->LoadTexture((basePath / textureFileName).string());
+				image->LoadTexture("Assets/default.png"/*(basePath / textureFileName).string()*/);
 				material->setImage(image);
 			}
 

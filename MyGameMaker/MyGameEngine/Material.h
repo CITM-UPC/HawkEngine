@@ -19,6 +19,7 @@ public:
 
 	bool useShader = false;
 private:
+	friend class ModelImporter;
 	std::shared_ptr<Image> imagePtr;
 
 public:
