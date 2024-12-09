@@ -39,6 +39,8 @@ GameObject::GameObject(const GameObject& other) :
         components[component.first]->owner = this;
     }
 
+    this->transform = GetComponent<Transform_Component>();
+
     for (const auto& child : other.children) {
         auto newChild = std::make_shared<GameObject>(*child);
         newChild->parent = this;
@@ -100,6 +102,8 @@ GameObject::GameObject(GameObject&& other) noexcept :
 	{
 		component.second->owner = this;
 	}
+
+    transform = GetComponent<Transform_Component>();
 
     other.parent = nullptr;
     other.children.clear();
