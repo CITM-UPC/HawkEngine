@@ -1,5 +1,5 @@
 GameObject0:
-  name: Cube
+  name: MainCamera
   Transform_Component:
     name: Transform_Component
     enabled: true
@@ -20,17 +20,12 @@ GameObject0:
         col2: 1
         col3: 0
       row3:
-        col0: -6.8078861236572266
-        col1: -7.2634763717651367
-        col2: -9.1089134216308594
+        col0: 0
+        col1: 0
+        col2: 0
         col3: 1
-  MeshRenderer:
-    name: MeshRenderer
-    enabled: true
-    mesh_path: shapes/cube
-    image_path: Assets/default.png
 GameObject1:
-  name: Cube_1
+  name: MainCamera_1
   Transform_Component:
     name: Transform_Component
     enabled: true
@@ -51,17 +46,12 @@ GameObject1:
         col2: 1
         col3: 0
       row3:
-        col0: -3
-        col1: -7
-        col2: -3
+        col0: 0
+        col1: 0
+        col2: 0
         col3: 1
-  MeshRenderer:
-    name: MeshRenderer
-    enabled: true
-    mesh_path: shapes/cube
-    image_path: Assets/default.png
 GameObject2:
-  name: Cube_2
+  name: BakerHouse.fbx
   Transform_Component:
     name: Transform_Component
     enabled: true
@@ -82,9 +72,9 @@ GameObject2:
         col2: 1
         col3: 0
       row3:
-        col0: -3
-        col1: -7
-        col2: -3
+        col0: 0
+        col1: 0
+        col2: 0
         col3: 1
   MeshRenderer:
     name: MeshRenderer
@@ -92,7 +82,7 @@ GameObject2:
     mesh_path: shapes/cube
     image_path: Assets/default.png
 GameObject3:
-  name: Cube_5
+  name: MainCamera_2
   Transform_Component:
     name: Transform_Component
     enabled: true
@@ -113,17 +103,12 @@ GameObject3:
         col2: 1
         col3: 0
       row3:
-        col0: -3
-        col1: -7
-        col2: -3
+        col0: 0
+        col1: 0
+        col2: 0
         col3: 1
-  MeshRenderer:
-    name: MeshRenderer
-    enabled: true
-    mesh_path: shapes/cube
-    image_path: Assets/default.png
 GameObject4:
-  name: Cube_3
+  name: MainCamera_3
   Transform_Component:
     name: Transform_Component
     enabled: true
@@ -148,13 +133,8 @@ GameObject4:
         col1: 0
         col2: 0
         col3: 1
-  MeshRenderer:
-    name: MeshRenderer
-    enabled: true
-    mesh_path: shapes/cube
-    image_path: Assets/default.png
 GameObject5:
-  name: MainCamera
+  name: MainCamera_4
   Transform_Component:
     name: Transform_Component
     enabled: true

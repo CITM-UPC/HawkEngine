@@ -45,8 +45,12 @@ protected:
 
         YAML::Node node = Component::encode();
 
-        node["mesh_path"] = mesh->filePath;
-        node["image_path"] = image->image_path;
+        /*node["mesh_path"] = mesh->filePath;
+        node["image_path"] = image->image_path;*/
+
+        if (mesh) {
+            node["mesh"] = mesh->Encode();
+        }
 
         return node;
     }
@@ -55,32 +59,40 @@ protected:
 
         Component::decode(node);
 
-        if (!node["mesh_path"] || !node["image_path"])
-            return false;
+        if (!node["mesh"]) { return false; }
 
-        // node["mesh_path"].as<std::string>();
-
-        auto _mesh = std::make_shared<Mesh>();
-        std::string path = node["mesh_path"].as<std::string>();
-
-        if (path.substr(0, 6) == "shape") {
-            if (path.find("cube")) {
-                _mesh = Mesh::CreateCube();
-            }
-            else if (path.find("sphere")) {
-                _mesh = Mesh::CreateSphere();
-            }
-            else if (path.find("plane")) {
-                _mesh = Mesh::CreatePlane();
-            }
-        }
-        else {
-             _mesh->LoadMesh(path.c_str());
-        }
-        SetMesh(_mesh);
-
+        std::shared_ptr<Mesh> my_mesh = std::make_shared<Mesh>();
+        my_mesh->Decode(node["mesh"]);
+        SetMesh(my_mesh);
 
         return true;
+
+        //if (!node["mesh_path"] || !node["image_path"])
+        //    return false;
+
+        //// node["mesh_path"].as<std::string>();
+
+        //auto _mesh = std::make_shared<Mesh>();
+        //std::string path = node["mesh_path"].as<std::string>();
+
+        //if (path.substr(0, 6) == "shape") {
+        //    if (path.find("cube")) {
+        //        _mesh = Mesh::CreateCube();
+        //    }
+        //    else if (path.find("sphere")) {
+        //        _mesh = Mesh::CreateSphere();
+        //    }
+        //    else if (path.find("plane")) {
+        //        _mesh = Mesh::CreatePlane();
+        //    }
+        //}
+        //else {
+        //     _mesh->LoadMesh(path.c_str());
+        //}
+        //SetMesh(_mesh);
+
+
+        //return true;
     }
 
 };

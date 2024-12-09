@@ -168,7 +168,11 @@ void SceneSerializer::DeSerialize(std::string path) {
 						if (component_name == "MeshRenderer") {
 
 							auto _mesh = std::make_shared<Mesh>();
-							std::string path = value["mesh_path"].as<std::string>();
+							if (value["mesh"]) {
+
+								_mesh->Decode(value["mesh"]);
+							}
+							/*std::string path = value["mesh_path"].as<std::string>();
 
 							if (path.substr(0, 6) == "shapes") {
 								if (path.find("cube")) {
@@ -183,9 +187,10 @@ void SceneSerializer::DeSerialize(std::string path) {
 							}
 							else {
 								_mesh->LoadMesh(path.c_str());
-							}
+							}*/
 
-							Application->root->AddMeshRenderer(*game_obj, _mesh, value["image_path"].as<std::string>() );
+							// TODO , add default img
+							Application->root->AddMeshRenderer(*game_obj, _mesh );
 						}
 					}
 				}
