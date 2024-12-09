@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "SceneSerializer.h"
 #include "App.h"
 #include "Root.h"
@@ -6,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+
 
 class MeshRenderer;
 
@@ -61,7 +63,7 @@ void SceneSerializer::Serialize(const std::string& directoryPath, bool play) {
 		{
 			YAML::Node node2;
 			node2 = component.second->encode();
-			
+
 			node[component.second->name] = node2;
 		}
 
@@ -83,19 +85,19 @@ void SceneSerializer::Serialize(const std::string& directoryPath, bool play) {
 	if (!play) filepath = directoryPath + "/" + Application->root->currentScene->GetName() + ".scene";
 	else { filepath = "EngineAssets/" + Application->root->currentScene->GetName() + ".scene"; }
 
-		try {
-			std::ofstream file(filepath);
-			if (file.is_open()) {
-				file << emitter.c_str();
-				file.close();
-			}
-			else {
-				LOG(LogType::LOG_ERROR, "No se pudo abrir el archivo para guardar la escena.");
-			}
+	try {
+		std::ofstream file(filepath);
+		if (file.is_open()) {
+			file << emitter.c_str();
+			file.close();
 		}
-		catch (const std::exception& e) {
-			LOG(LogType::LOG_ERROR, "Error al guardar la escena: %s", e.what());
+		else {
+			LOG(LogType::LOG_ERROR, "No se pudo abrir el archivo para guardar la escena.");
 		}
+	}
+	catch (const std::exception& e) {
+		LOG(LogType::LOG_ERROR, "Error al guardar la escena: %s", e.what());
+	}
 
 }
 
@@ -120,18 +122,18 @@ void SceneSerializer::DeSerialize(std::string path) {
 		Application->input->ClearSelection();
 	}
 
-    std::string sceneName = path.substr(path.find_last_of("/\\") + 1);
-    sceneName = sceneName.substr(0, sceneName.find_last_of("."));
+	std::string sceneName = path.substr(path.find_last_of("/\\") + 1);
+	sceneName = sceneName.substr(0, sceneName.find_last_of("."));
 
 	LOG(LogType::LOG_INFO, "Scene Name: %s", sceneName.c_str());
 
-    std::shared_ptr<Scene> scene = nullptr;
-    for (auto& s : Application->root->scenes) {
-        if (s->GetName() == sceneName) {
-            scene = s;
-            break;
-        }
-    }
+	std::shared_ptr<Scene> scene = nullptr;
+	for (auto& s : Application->root->scenes) {
+		if (s->GetName() == sceneName) {
+			scene = s;
+			break;
+		}
+	}
 
 	if (Application->root->GetActiveScene() != nullptr) {
 		Application->root->RemoveScene(Application->root->currentScene->GetName());
@@ -154,7 +156,7 @@ void SceneSerializer::DeSerialize(std::string path) {
 			//---Load Components---//
 
 			for (YAML::const_iterator it = _node.begin(); it != _node.end(); ++it) {
-				
+
 				const std::string key = it->first.as<std::string>();
 				const YAML::Node& value = it->second;
 
@@ -170,15 +172,27 @@ void SceneSerializer::DeSerialize(std::string path) {
 							auto _mesh = std::make_shared<Mesh>();
 							if (value["mesh"]) {
 
-								//TODO change this to handle exceptions and such
+								std::string meshPath = value["mesh"].as<std::string>();
 
-								std::string path = value["mesh"].as<std::string>();
-								YAML::Node meshNode = YAML::LoadFile(path);
+								//TODO MARCO , create some file loader / methods module for this
 
-								_mesh->Decode(meshNode);
+								FILE* file = fopen(meshPath.c_str(), "r");
+
+								// If fopen fails, file will be null
+								if (file == nullptr) {
+									LOG(LogType::LOG_ERROR, "Couldn't load file %s", meshPath.c_str());
+								}
+								else {
+
+									fclose(file); /*Close file*/
+
+									YAML::Node meshNode = YAML::LoadFile(meshPath);
+
+									_mesh->Decode(meshNode);
+								}
 							}
 
-							
+
 
 							/*std::string path = value["mesh_path"].as<std::string>();
 
@@ -198,7 +212,7 @@ void SceneSerializer::DeSerialize(std::string path) {
 							}*/
 
 							// TODO , add default img
-							Application->root->AddMeshRenderer(*game_obj, _mesh );
+							Application->root->AddMeshRenderer(*game_obj, _mesh);
 						}
 					}
 				}
