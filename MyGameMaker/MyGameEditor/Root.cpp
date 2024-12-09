@@ -32,7 +32,7 @@ bool  Root::Awake()
 
     //mesh->LoadMesh("Assets/Meshes/BakerHouse.fbx");
     ModelImporter meshImp;
-    meshImp.loadFromFile("Assets/Meshes/BakerHouse.fbx");
+    meshImp.loadFromFile("Assets/Meshes/Street environment_V01.fbx");
 
     for (int i = 0; i < meshImp.meshGameObjects.size(); i++) {
         auto MarcoVicePresidente2 = meshImp.meshGameObjects[i];
@@ -44,7 +44,7 @@ bool  Root::Awake()
         //    int a = 0;
         //}
 
-       // ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
+        ParentGameObject(*MarcoVicePresidente2, *MarcoVicePresidente);
     }
 
 
@@ -182,10 +182,10 @@ void Root::AddMeshRenderer(GameObject& go, std::shared_ptr<Mesh> mesh, const std
     meshRenderer->SetMesh(mesh);
     meshRenderer->SetMaterial(material);
 
-    if (material->loadShaders("vertex_shader.glsl", "fragment_shader.glsl")) {
-        material->useShader = true;
-        material->bindShaders();
-    }
+    //if (material->loadShaders("vertex_shader.glsl", "fragment_shader.glsl")) {
+    //    material->useShader = true;
+    //    material->bindShaders();
+    //}
     meshRenderer->SetImage(image);
 }
 

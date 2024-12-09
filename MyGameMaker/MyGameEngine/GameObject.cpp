@@ -249,6 +249,12 @@ void GameObject::DrawInstancedMatrix() const
 
 void GameObject::DrawPushPopMatrix() const
 {
+    if (name == "GameObject") {
+        bool mequieromatar = true;
+    }
+
+    auto pos = transform->GetPosition();
+
     glPushMatrix();
     glMultMatrixd(transform->GetData());
 
@@ -261,7 +267,7 @@ void GameObject::DrawPushPopMatrix() const
   //  glMultMatrixd(&glm::dmat4(1.0)[0][0]);
 
     glPopMatrix();
-    glLoadIdentity();
+    //glLoadIdentity();
 }
 
 void GameObject::OnEnable() {}

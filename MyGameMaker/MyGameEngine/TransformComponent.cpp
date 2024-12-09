@@ -15,6 +15,7 @@ Transform_Component::Transform_Component(GameObject* owner) : Component(owner) {
 Transform_Component::Transform_Component(const Transform_Component& other) : Component(other)
 {
     matrix = other.matrix;
+    local_matrix = other.local_matrix;
     position = other.position;
     left = other.left;
     up = other.up;
@@ -40,6 +41,7 @@ Transform_Component& Transform_Component::operator=(const Transform_Component& o
 Transform_Component::Transform_Component(Transform_Component&& other) noexcept : Component(std::move(other))
 {
 	matrix = std::move(other.matrix);
+    local_matrix = std::move(other.local_matrix);
 	position = std::move(other.position);
 	left = std::move(other.left);
 	up = std::move(other.up);
@@ -52,6 +54,7 @@ Transform_Component& Transform_Component::operator=(Transform_Component&& other)
 	{
 		Component::operator=(std::move(other));
 		matrix = std::move(other.matrix);
+        local_matrix = std::move(local_matrix);
 		position = std::move(other.position);
 		left = std::move(other.left);
 		up = std::move(other.up);
