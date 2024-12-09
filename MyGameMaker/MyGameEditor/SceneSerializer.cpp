@@ -170,8 +170,16 @@ void SceneSerializer::DeSerialize(std::string path) {
 							auto _mesh = std::make_shared<Mesh>();
 							if (value["mesh"]) {
 
-								_mesh->Decode(value["mesh"]);
+								//TODO change this to handle exceptions and such
+
+								std::string path = value["mesh"].as<std::string>();
+								YAML::Node meshNode = YAML::LoadFile(path);
+
+								_mesh->Decode(meshNode);
 							}
+
+							
+
 							/*std::string path = value["mesh_path"].as<std::string>();
 
 							if (path.substr(0, 6) == "shapes") {

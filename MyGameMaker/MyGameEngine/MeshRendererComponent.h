@@ -49,7 +49,7 @@ protected:
         node["image_path"] = image->image_path;*/
 
         if (mesh) {
-            node["mesh"] = mesh->Encode();
+            node["mesh"] = mesh->meshPath;
         }
 
         return node;
@@ -62,7 +62,13 @@ protected:
         if (!node["mesh"]) { return false; }
 
         std::shared_ptr<Mesh> my_mesh = std::make_shared<Mesh>();
-        my_mesh->Decode(node["mesh"]);
+
+        // TODO make this handle exceptions
+
+        std::string filepath = node["mesh"].as<std::string>();
+        YAML::Node meshNode =  YAML::LoadFile(filepath);
+
+        my_mesh->Decode(meshNode);
         SetMesh(my_mesh);
 
         return true;

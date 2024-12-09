@@ -402,6 +402,7 @@ YAML::Node Mesh::Encode() const
 	return node;
 }
 
+// Pass the .mesh file 
 bool Mesh::Decode(const YAML::Node& node)
 {
 	_vertices = node["vertices"].as<std::vector<glm::vec3>>();
@@ -418,7 +419,7 @@ bool Mesh::Decode(const YAML::Node& node)
 	return true;
 }
 
-void Mesh::Save(const std::string& filename) const 
+void Mesh::Save(const std::string& filename)  
 {
 	std::string fullPath = "Library/Mesh" + filename + ".mesh";
 
@@ -427,6 +428,8 @@ void Mesh::Save(const std::string& filename) const
 	}
 
 	LOG(LogType::LOG_INFO, "Guardando malla en: %s", fullPath.c_str());
+	std::string meshpath = std::string( "Library/Mesh" + filename + ".mesh");
+	meshPath = fullPath;
 
 	std::ofstream fout(fullPath);
 	YAML::Emitter out;
