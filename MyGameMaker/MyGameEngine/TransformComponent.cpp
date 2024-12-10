@@ -92,7 +92,7 @@ void Transform_Component::TranslateLocal(const glm::dvec3& translation) {
 }
 
 
-void Transform_Component::Update(float deltaTime) 
+void Transform_Component::Update(float deltaTime) {
 
     if (owner) {
 
