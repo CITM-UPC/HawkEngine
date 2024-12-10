@@ -44,6 +44,12 @@ GameObject::GameObject(const GameObject& other) :
         newChild->parent = this;
         children.emplace_back(std::move(newChild));
 	}
+
+    if (transform != GetComponent<Transform_Component>()) /*Update Transform ptr*/ {
+        transform = GetComponent<Transform_Component>();
+    }
+
+
 }
 
 GameObject& GameObject::operator=(const GameObject& other) {

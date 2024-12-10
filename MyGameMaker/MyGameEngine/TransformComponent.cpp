@@ -31,6 +31,8 @@ Transform_Component& Transform_Component::operator=(const Transform_Component& o
         left = other.left;
         up = other.up;
         forward = other.forward;
+
+        local_matrix = other.local_matrix;
     }
     return *this;
 }
@@ -67,6 +69,7 @@ std::unique_ptr<Component> Transform_Component::Clone(GameObject* owner)
     clone->forward = this->forward;
     clone->position = this->position;
     clone->owner = owner;
+    clone->local_matrix = this->local_matrix;
     return clone;
 }
 
@@ -88,8 +91,9 @@ void Transform_Component::TranslateLocal(const glm::dvec3& translation) {
     HandleWorldUpdate();
 }
 
+
 void Transform_Component::Update(float deltaTime) 
-{
+
     if (owner) {
 
         if (!owner->GetParent())/*No owner means owner is the scene*/ {
